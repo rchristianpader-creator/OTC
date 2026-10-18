@@ -1,0 +1,1431 @@
+<title>OTC Sachkunde</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: eine Spalte wie ein Marktregal – gelbe Kopfleiste, oben der heutige Stand, darunter die Fächer als Regalböden, dann die Stapel als Leitkarten; beim Lernen liegt ein Regaletikett mit rotem Aktions-Aufkleber in der Mitte. */
+/* Bewusst nur ein Look: Netto-Gelb, -Rot und -Orange, auch wenn das Handy im Dunkelmodus ist. */
+:root {
+  color-scheme: light;
+  --ground: #F4F4F2;
+  --surface: #FAFAF8;
+  --raised: #FFFFFF;
+  --card: #FFFFFF;
+  --ink: #1A1A1A;
+  --muted: #5A5A56;
+  --faint: #9A9A94;
+  --line: #DCDCD6;
+  --brand: #FFE500;
+  --brand-ink: #1A1A1A;
+  --brand-soft: #FFF6BF;
+  --brand-line: #F0D400;
+  --orange: #ED760B;
+  --head: #FFE500;
+  --head-ink: #1A1A1A;
+  --head-word: #DC0D15;
+  --rule-red: #DC0D15;
+  --rule-blue: #DCDCD6;
+  --accent: #DC0D15;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FDE2E3;
+  --stamp-ink: #FFE500;
+  --primary: #DC0D15;
+  --primary-ink: #FFFFFF;
+  --primary-line: #B80A11;
+  --ok: #1C7A43;
+  --ok-ink: #FFFFFF;
+  --ok-soft: #DDF1E4;
+  --bad: #A50E16;
+  --bad-ink: #FFFFFF;
+  --bad-soft: #FBE0E0;
+  /* Fächer als Ampel: frisch gelernt rot, sicher grün */
+  --f1: #F2A9A9;
+  --f2: #F6C76B;
+  --f3: #FFE14D;
+  --f4: #9FD06A;
+  --f5: #2F9A4C;
+  --edge: rgba(255, 255, 255, .55);
+  --shadow: 0 1px 2px rgba(28, 28, 26, .08), 0 10px 26px -14px rgba(28, 28, 26, .35);
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-hand: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--head); }
+button, input, select, textarea { font: inherit; color: inherit; }
+p { margin: 0; }
+h1 { font: 800 clamp(1.85rem, 5.2vw, 2.4rem)/1.05 var(--font-display); letter-spacing: 0; margin: 0; text-wrap: balance; }
+h2 { font: 800 1.45rem/1.15 var(--font-display); margin: 0; text-wrap: balance; }
+h3 { font: 700 1.05rem/1.3 var(--font-body); margin: 0; text-wrap: balance; }
+.eyebrow { font: 700 .86rem/1.2 var(--font-display); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.lead { font-size: 1.04rem; color: var(--muted); max-width: 62ch; }
+.hint { font-size: .88rem; color: var(--muted); }
+.tnum { font-variant-numeric: tabular-nums; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: var(--head); border-bottom: 5px solid var(--accent); }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; background: none; border: 0; padding: 4px 0; color: var(--head-word); font: 800 1.6rem/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; cursor: pointer; white-space: nowrap; }
+.brand-mark { flex: none; width: 28px; height: 18px; background: var(--accent); border-radius: 3px 9px 9px 3px; position: relative; transform: rotate(-8deg); }
+.brand-mark::before { content: ""; position: absolute; right: 5px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--head); }
+.brand-mark::after { content: ""; position: absolute; left: 4px; top: 5px; width: 11px; height: 2px; background: var(--accent-ink); box-shadow: 0 4px 0 var(--accent-ink); }
+.status { display: inline-flex; align-items: center; gap: 6px; font: 500 .74rem/1.25 var(--font-mono); letter-spacing: .03em; color: var(--head-ink); text-align: right; max-width: 48%; }
+.status::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.status.ok::before { background: var(--ok); }
+.status.busy::before { background: var(--orange); animation: pulse 1s ease-in-out infinite; }
+.status.err { color: var(--bad); }
+.status.err::before { background: var(--bad); }
+@keyframes pulse { 50% { opacity: .3; } }
+
+.main { padding-block: 20px 64px; }
+.stack { display: flex; flex-direction: column; gap: 30px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sec-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.sec-head.row { flex-direction: row; justify-content: space-between; }
+.notice { padding: 12px 14px; border: 1px solid var(--accent); border-radius: 12px; background: var(--accent-soft); font-size: .95rem; }
+.sync-note { text-align: center; max-width: 52ch; margin: 0 auto; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); font: 700 .95rem/1.2 var(--font-body); cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+@media (hover: hover) and (pointer: fine) { .btn:hover { border-color: var(--accent); } }
+.btn.primary { background: var(--primary); border-color: var(--primary-line); color: var(--primary-ink); }
+@media (hover: hover) and (pointer: fine) { .btn.primary:hover { filter: brightness(1.06); border-color: var(--primary-line); } }
+.btn.ok { background: var(--ok); border-color: transparent; color: var(--ok-ink); }
+.btn.bad { background: var(--raised); border: 2px solid var(--bad); color: var(--bad); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--accent); }
+@media (hover: hover) and (pointer: fine) { .btn.ghost:hover { background: var(--accent-soft); } }
+.btn.small { min-height: 36px; padding: 6px 12px; font-size: .88rem; border-radius: 8px; }
+.btn.big { min-height: 56px; padding: 12px 22px; font: 800 1.3rem/1 var(--font-display); text-transform: uppercase; letter-spacing: .03em; border-radius: 12px; }
+.btn.wide { width: 100%; max-width: 560px; }
+.btn.danger-text { color: var(--bad); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:focus-visible, .opt:focus-visible, .chipbtn:focus-visible, .icard:focus-visible, .brand:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+kbd { font: 500 .7rem/1 var(--font-mono); padding: 3px 5px; border-radius: 5px; border: 1px solid currentColor; opacity: .75; }
+button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+@media (pointer: coarse) { .btn.small { min-height: 44px; padding: 8px 14px; } .chipbtn { min-height: 48px; } .opt { min-height: 60px; } }
+.mc-opts { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 560px; }
+.choice { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 60px; padding: 12px 16px; text-align: left; border: 1.5px solid var(--line); border-radius: 14px; background: var(--raised); color: var(--ink); font: 400 1.05rem/1.35 var(--font-body); cursor: pointer; transition: transform .08s, background .15s, border-color .15s; }
+@media (hover: hover) and (pointer: fine) { .choice:hover:not(:disabled) { border-color: var(--accent); } }
+.choice:active:not(:disabled) { transform: scale(.98); background: var(--accent-soft); }
+.choice:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.choice-key { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 700 .9rem/1 var(--font-mono); }
+.choice-text { min-width: 0; overflow-wrap: anywhere; }
+.choice.is-right { border-color: var(--ok); background: var(--ok-soft); font-weight: 700; }
+.choice.is-right .choice-key { border-color: var(--ok); background: var(--ok); color: var(--ok-ink); }
+.choice.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+.choice.is-wrong .choice-key { border-color: var(--bad); background: var(--bad); color: var(--bad-ink); }
+.choice.is-dim { opacity: .5; }
+.choice:disabled { cursor: default; color: var(--ink); }
+.mc-feedback { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .choice { transition: none; } .choice:active:not(:disabled) { transform: none; } }
+@media (hover: none) { kbd, .kbd-hint { display: none; } }
+
+/* Heute */
+.today { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 620px) { .today { grid-template-columns: minmax(0, 1fr); } }
+.today-main { background: var(--raised); border: 1px solid var(--line); border-top: 8px solid var(--brand); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; box-shadow: var(--shadow); }
+.due { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.due-num { font: 800 5.2rem/.85 var(--font-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.due-label { font-size: 1.1rem; font-weight: 700; }
+.done-msg { font-weight: 700; color: var(--ok); }
+.today-side { display: flex; flex-direction: column; gap: 16px; padding: 4px 2px; min-width: 0; }
+.goal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; font-size: .95rem; }
+.meter { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--orange); border-radius: inherit; }
+.meter.done > span { background: var(--ok); }
+.goal-set { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: .88rem; color: var(--muted); }
+.goal-set label { font-weight: 400; font-size: .88rem; }
+.streak { display: flex; align-items: baseline; gap: 8px; font-size: .95rem; }
+.streak-n { font: 800 1.6rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.day-track { width: 100%; max-width: 28px; height: 36px; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); display: flex; align-items: flex-end; overflow: hidden; }
+.day-fill { width: 100%; height: calc(var(--h) * 100%); background: var(--orange); }
+.day.goal .day-fill { background: var(--ok); }
+.day-l { font: 500 .68rem/1 var(--font-mono); color: var(--muted); }
+.day.is-today .day-l { color: var(--ink); font-weight: 700; }
+
+/* Prüfung */
+.exam { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: var(--brand-soft); border: 1px solid var(--brand-line); border-radius: 12px; }
+.exam-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; }
+.ready-meter { position: relative; overflow: visible; height: 10px; }
+.ready-meter > span { border-radius: 99px; }
+.ready-meter i { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--ink); border-radius: 1px; }
+.moodle-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.moodle-box { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.moodle-box textarea { font: 500 .85rem/1.4 var(--font-mono); }
+.examdate { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.examdate input[type="date"] { width: auto; padding: 6px 10px; }
+.exam-facts { font-size: .98rem; margin-top: 4px; }
+.exam-facts b { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+
+/* Kasten mit fünf Fächern */
+.faecher { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; padding: 14px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.fach { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; min-width: 0; }
+.slot { width: 100%; height: 110px; border-radius: 3px 3px 0 0; background: var(--raised); border: 1px solid var(--line); border-bottom: 5px solid var(--ink); display: flex; align-items: flex-end; overflow: hidden; margin-bottom: 6px; }
+.fill { width: 100%; background-color: var(--fc); background-image: repeating-linear-gradient(to top, transparent 0 3px, var(--edge) 3px 4px); }
+.fach-n { font: 800 1.6rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.fach-name { font-size: .82rem; font-weight: 700; }
+.fach-int { font-size: .72rem; color: var(--muted); line-height: 1.2; }
+.fach-due { font: 500 .68rem/1.2 var(--font-mono); color: var(--accent); }
+
+/* Stapel als Leitkarten */
+.decks { list-style: none; margin: 0; padding: 22px 0 0; display: flex; flex-direction: column; gap: 34px; }
+.deck { position: relative; }
+.deck-tab { position: absolute; bottom: calc(100% - 1px); left: calc(14px + var(--tab)); z-index: 1; height: 25px; padding: 4px 12px 0; background: var(--raised); border: 1px solid var(--line); border-bottom: 0; border-radius: 8px 8px 0 0; font: 500 .72rem/18px var(--font-mono); letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+.deck-tab.has-due { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.deck-body { position: relative; background: var(--raised); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.deck-title { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.deck-meta { font-size: .9rem; color: var(--muted); }
+.deck-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 .68rem/1 var(--font-mono); text-transform: uppercase; letter-spacing: .06em; padding: 4px 7px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.minibar { display: flex; gap: 2px; height: 8px; border-radius: 4px; overflow: hidden; background: var(--surface); }
+.minibar span { background: var(--fc); min-width: 3px; }
+.fchip { display: inline-flex; align-items: center; gap: 6px; font: 500 .72rem/1 var(--font-mono); color: var(--muted); padding: 4px 8px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); white-space: nowrap; }
+.fchip::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--fc); }
+
+/* Leerer Kasten */
+.empty { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding-top: 8px; }
+.box-art { position: relative; width: 210px; max-width: 100%; height: 118px; display: flex; align-items: flex-end; gap: 5px; padding: 0 14px; }
+.box-art i { flex: 1; height: var(--h); position: relative; background: var(--card); border: 1px solid var(--line); border-bottom: 0; border-radius: 4px 4px 0 0; }
+.box-art i::before { content: ""; position: absolute; left: 4px; right: 4px; top: 6px; height: 1.5px; background: var(--rule-red); }
+.box-art::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; height: 48px; background: var(--accent); border-radius: 4px 4px 12px 12px; }
+.box-art::before { content: ""; position: absolute; z-index: 2; left: 50%; bottom: 16px; width: 54px; height: 16px; margin-left: -27px; background: var(--card); border-radius: 3px; }
+.box-art.is-loading i { animation: bob 1.4s ease-in-out infinite; }
+.box-art.is-loading i:nth-child(2) { animation-delay: .15s; }
+.box-art.is-loading i:nth-child(3) { animation-delay: .3s; }
+.box-art.is-loading i:nth-child(4) { animation-delay: .45s; }
+.box-art.is-loading i:nth-child(5) { animation-delay: .6s; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+.loading { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding-top: 24px; color: var(--muted); }
+.how { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; max-width: 60ch; }
+
+/* Lernen */
+.study { display: flex; flex-direction: column; gap: 18px; }
+.study-top { display: flex; align-items: center; gap: 12px; }
+.bar { flex: 1; height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--orange); transition: width .3s; }
+.count { font: 500 .8rem/1 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mode-note { font-size: .88rem; color: var(--muted); text-align: center; }
+.stage { perspective: 1400px; display: flex; justify-content: center; }
+.stage.enter { animation: deal .3s ease-out; }
+@keyframes deal { from { transform: translateY(10px); opacity: .35; } }
+.icard { width: 100%; max-width: 560px; display: grid; grid-template-columns: minmax(0, 1fr); transform-style: preserve-3d; transition: transform .55s cubic-bezier(.2, .7, .2, 1); cursor: pointer; outline: none; }
+.icard.flipped { transform: rotateY(180deg); }
+.icard.static { cursor: default; }
+.icard.compact .face { aspect-ratio: auto; min-height: 140px; }
+.icard.compact .icard-body { padding-block: 18px 22px; }
+.face { grid-area: 1 / 1; width: 100%; min-width: 0; display: flex; flex-direction: column; aspect-ratio: 105 / 74; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.face.back { transform: rotateY(180deg); }
+.icard-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 14px; background: var(--brand); color: var(--brand-ink); border-radius: 9px 9px 0 0; }
+.hand { font: 700 1.05rem/1.15 var(--font-hand); text-transform: uppercase; letter-spacing: .03em; color: var(--brand-ink); min-width: 0; overflow-wrap: anywhere; }
+.stamp { flex: none; font: 800 1.2rem/1 var(--font-display); text-transform: uppercase; letter-spacing: .04em; color: var(--stamp-ink); background: var(--accent); border-radius: 6px; padding: 5px 9px; transform: rotate(-5deg); box-shadow: 0 2px 0 rgba(0, 0, 0, .18); }
+.icard-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 16px 20px 22px; }
+.qtext, .atext { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+.xl { font-size: 2.15rem; line-height: 1.2; font-weight: 700; }
+.lg { font-size: 1.55rem; line-height: 1.3; font-weight: 700; }
+.md { font-size: 1.2rem; line-height: 1.45; }
+.sm { font-size: 1.02rem; line-height: 1.5; }
+.qsmall { font-size: .92rem; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.anote { font-size: .92rem; color: var(--muted); max-width: 46ch; white-space: pre-wrap; }
+.qprompt { font: 800 1.45rem/1.1 var(--font-hand); text-transform: uppercase; letter-spacing: .02em; color: var(--accent); }
+.qopts { text-align: left; margin: 6px 0 0; padding-left: 1.6em; display: flex; flex-direction: column; gap: 4px; font-size: .98rem; line-height: 1.4; max-width: 100%; overflow-wrap: anywhere; }
+.cimg { display: block; width: 100%; max-width: 380px; max-height: 220px; object-fit: cover; border-radius: 4px; box-shadow: 0 0 0 1px var(--line); background: var(--surface); }
+.cimg.small { max-width: 150px; max-height: 84px; }
+.study-actions { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.answer-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 560px; }
+.explain { width: 100%; max-width: 560px; margin: 0 auto; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; gap: 6px; }
+.explain-text { white-space: pre-wrap; font-size: .98rem; }
+@media (prefers-reduced-motion: reduce) { .icard { transition: none; } .stage.enter { animation: none; } .box-art.is-loading i { animation: none; } }
+
+/* Test */
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 560px; margin: 0 auto; }
+@media (max-width: 520px) { .options { grid-template-columns: 1fr; } }
+.opt { display: flex; align-items: flex-start; gap: 10px; text-align: left; padding: 12px 14px; min-height: 54px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--raised); color: var(--ink); font: 400 1rem/1.35 var(--font-body); cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { .opt:hover:not(:disabled) { border-color: var(--accent); } }
+.opt span { min-width: 0; overflow-wrap: anywhere; }
+.opt.is-right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt:disabled { cursor: default; color: var(--ink); }
+.test-foot { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.verdict { font-weight: 700; text-align: center; }
+.verdict.ok { color: var(--ok); }
+.verdict.bad { color: var(--bad); }
+
+/* Drogen-Probe */
+.drug-photo { margin: 0; width: 100%; max-width: 560px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px; }
+.drug-photo img { width: 100%; height: auto; border-radius: 4px; display: block; }
+.drug-photo figcaption { font: 500 .72rem/1 var(--font-mono); color: var(--muted); letter-spacing: .04em; }
+.groups { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 560px; margin: 0 auto; }
+.grp { border: 0; padding: 0; margin: 0; min-width: 0; }
+.grp legend { font-weight: 700; font-size: .92rem; padding: 0; margin-bottom: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chipbtn { max-width: 100%; min-height: 40px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--raised); color: var(--ink); font: 400 .95rem/1.3 var(--font-body); text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+@media (hover: hover) and (pointer: fine) { .chipbtn:hover:not(:disabled) { border-color: var(--accent); } }
+.chipbtn.is-sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.chipbtn.is-right { border-color: var(--ok); background: var(--ok-soft); font-weight: 700; }
+.chipbtn.is-wrong { border-color: var(--bad); background: var(--bad-soft); text-decoration: line-through; }
+.chipbtn:disabled { cursor: default; color: var(--ink); }
+
+/* Auswertung */
+.summary { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding-top: 6px; }
+.score { font: 800 clamp(2.6rem, 9vw, 3.6rem)/1 var(--font-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.dots { display: flex; flex-wrap: wrap; gap: 4px; }
+.dots span { width: 14px; height: 14px; border-radius: 3px; background: var(--ok); }
+.dots span.bad { background: var(--bad); }
+.pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 99px; font-weight: 700; font-size: .92rem; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.moves { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.mistakes { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.mistakes ul { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
+.mistakes li { padding: 12px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.mistakes li:first-child { border-top: 0; }
+
+/* Stapel bearbeiten */
+.deck-view { display: flex; flex-direction: column; gap: 24px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+label { font-weight: 700; font-size: .9rem; }
+input[type="text"], input[type="search"], input[type="date"], textarea, select { width: 100%; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--raised); color: var(--ink); font: 400 1rem/1.4 var(--font-body); }
+select.inline { width: auto; padding: 6px 10px; font-size: .9rem; }
+textarea { resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .two { grid-template-columns: 1fr; } }
+.panel { display: flex; flex-direction: column; gap: 12px; }
+details > summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 6px 0; }
+details[open] > summary { margin-bottom: 8px; }
+details .panel { padding-top: 4px; }
+.card-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); overflow: hidden; }
+.crow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 12px 14px; border-top: 1px solid var(--line); }
+.crow:first-child { border-top: 0; }
+.crow.editing { grid-template-columns: minmax(0, 1fr); }
+.crow-text { min-width: 0; display: flex; gap: 10px; align-items: flex-start; }
+.crow-text img { flex: none; width: 56px; height: 40px; object-fit: cover; border-radius: 4px; }
+.cf { font-weight: 700; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cb { color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.crow-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.crow-actions { display: flex; align-items: center; gap: 2px; }
+.list-empty { padding: 16px; color: var(--muted); }
+@media (max-width: 520px) { .crow { grid-template-columns: minmax(0, 1fr); } .crow-side { flex-direction: row; justify-content: space-between; align-items: center; } }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 20; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 10px; background: var(--ink); color: var(--ground); font-weight: 700; font-size: .95rem; box-shadow: var(--shadow); opacity: 0; transform: translate(-50%, 16px); pointer-events: none; transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+
+<header class="topbar">
+  <div class="wrap">
+    <button class="brand" type="button" data-act="home" aria-label="OTC Sachkunde, zur Übersicht"><span class="brand-mark" aria-hidden="true"></span>OTC Sachkunde</button>
+    <span class="status busy" id="status">Lädt …</span>
+  </div>
+</header>
+<main class="wrap main" id="app"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* Leitner: Abstand in Tagen bis zur nächsten Abfrage, je Fach */
+const INTERVALS = [0, 1, 2, 4, 8, 16];
+const FACH_INT = ['', 'täglich', 'alle 2 Tage', 'alle 4 Tage', 'alle 8 Tage', 'alle 16 Tage'];
+const SESSION_SIZE = 20;
+const GOALS = [10, 20, 30, 50, 100];
+const DIRS = { normal: 'Vorderseite zuerst', reverse: 'Rückseite zuerst', mixed: 'Gemischt' };
+const TEILE = ['Blätter', 'Blüten', 'Früchte', 'Kraut', 'Rinde', 'Samen', 'Wurzel'];
+const LOCAL_KEY = 'otc-sachkunde.v1';
+const MAX_DECK_BYTES = 240000;
+const IMG_RE = /^drogen\/\d{2}\.jpg$/;
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const byId = (id) => document.getElementById(id);
+const imgSrc = (p) => (window.OTC_DATA && window.OTC_DATA.images && window.OTC_DATA.images[p]) || p;
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-5);
+const norm = (s) => String(s ?? '').trim().toLowerCase();
+const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const uniq = (arr) => { const seen = new Set(); return arr.filter((x) => { const k = norm(x); if (!k || seen.has(k)) return false; seen.add(k); return true; }); };
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function dayKey(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+const today = () => dayKey(new Date());
+function addDays(key, n) { const [y, m, d] = key.split('-').map(Number); return dayKey(new Date(y, m - 1, d + n)); }
+const validDay = (k) => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k);
+const clampBox = (b) => Math.min(5, Math.max(1, parseInt(b, 10) || 1));
+function sizeClass(t) { const n = String(t).length; return n <= 18 ? 'xl' : n <= 60 ? 'lg' : n <= 160 ? 'md' : 'sm'; }
+
+const S = { ready: false, mode: null, localReason: '', decks: [], stats: { goal: 20, history: {}, newd: {}, examDate: null, exams: [] }, view: 'home', params: {}, session: null, sample: null, saveError: '' };
+let hotData = null;
+let explainCtl = null;
+
+/* ---------- Daten ---------- */
+function normalizeCard(c, i) {
+  if (!c || typeof c !== 'object') return null;
+  const f = String(c.f ?? '').trim(), b = String(c.b ?? '').trim();
+  if (!f && !b) return null;
+  const card = { id: String(c.id || 'c' + i), f, b, box: clampBox(c.box), due: validDay(c.due) ? c.due : today(), ok: +c.ok || 0, bad: +c.bad || 0, seen: validDay(c.seen) ? c.seen : null };
+  if (c.n) card.n = String(c.n);
+  if (typeof c.img === 'string' && IMG_RE.test(c.img)) card.img = c.img;
+  if (Array.isArray(c.opts) && c.opts.length >= 2) card.opts = c.opts.map(String).slice(0, 8);
+  if (c.last === 0 || c.last === 1) card.last = c.last;
+  if (c.x && typeof c.x === 'object') card.x = { teil: String(c.x.teil || ''), wirkstoff: String(c.x.wirkstoff || ''), anwendung: String(c.x.anwendung || '') };
+  return card;
+}
+function normalizeDeck(id, d) {
+  return {
+    id, name: String(d?.name || 'Ohne Namen').slice(0, 80),
+    direction: DIRS[d?.direction] ? d.direction : 'normal',
+    example: !!d?.example, order: Number.isFinite(+d?.order) ? +d.order : 999,
+    createdAt: +d?.createdAt || 0,
+    cards: Array.isArray(d?.cards) ? d.cards.map(normalizeCard).filter(Boolean) : [],
+  };
+}
+function dayCounts(obj, keep) {
+  const out = {};
+  if (obj && typeof obj === 'object') for (const [k, v] of Object.entries(obj)) if (validDay(k) && +v > 0) out[k] = Math.floor(+v);
+  const keys = Object.keys(out).sort();
+  for (const k of keys.slice(0, Math.max(0, keys.length - keep))) delete out[k];
+  return out;
+}
+function normalizeStats(o) {
+  const goal = GOALS.includes(+o?.goal) ? +o.goal : 20;
+  const exams = Array.isArray(o?.exams)
+    ? o.exams.filter((e) => e && validDay(e.date) && Number.isFinite(+e.score) && +e.max > 0).map((e) => ({ date: e.date, score: +e.score, max: +e.max })).slice(-20)
+    : [];
+  return { goal, history: dayCounts(o?.history, 400), newd: dayCounts(o?.newd, 60), examDate: validDay(o?.examDate) ? o.examDate : null, exams };
+}
+function serializeCard(c) {
+  const o = { id: c.id, f: c.f, b: c.b, box: c.box, due: c.due, ok: c.ok, bad: c.bad, seen: c.seen || null };
+  if (c.n) o.n = c.n; if (c.img) o.img = c.img; if (c.opts) o.opts = c.opts; if (c.x) o.x = c.x; if (c.last === 0 || c.last === 1) o.last = c.last;
+  return o;
+}
+function serializeDeck(d) { return { name: d.name, direction: d.direction, example: !!d.example, order: d.order, createdAt: d.createdAt || Date.now(), cards: d.cards.map(serializeCard) }; }
+const deckOrder = (a, b) => a.order - b.order || a.createdAt - b.createdAt || a.name.localeCompare(b.name, 'de');
+const getDeck = (id) => S.decks.find((d) => d.id === id) || null;
+const getCard = (deckId, cardId) => getDeck(deckId)?.cards.find((c) => c.id === cardId) || null;
+const newCard = (f, b) => ({ id: uid(), f, b, box: 1, due: today(), ok: 0, bad: 0, seen: null });
+function fits(d, extra = []) {
+  const json = JSON.stringify(serializeDeck({ ...d, cards: d.cards.concat(extra) }));
+  return new TextEncoder().encode(json).length <= MAX_DECK_BYTES;
+}
+const isDrugDeck = (d) => d.cards.filter((c) => c.x && c.img).length >= 4;
+function countDue(deckIds) { const t = today(); let n = 0; for (const d of S.decks) if (!deckIds || deckIds.includes(d.id)) for (const c of d.cards) if (c.due <= t) n++; return n; }
+function calcStreak() { const h = S.stats.history; let k = today(); if (!h[k]) k = addDays(k, -1); let n = 0; while (h[k]) { n++; k = addDays(k, -1); } return n; }
+
+/* ---------- Autopilot: Tagesplan, neue Karten, Prüfungsreife ---------- */
+const isNew = (c) => !c.seen;
+function daysUntil(key) { const [y, m, d] = key.split('-').map(Number); const [a, b, c] = today().split('-').map(Number); return Math.round((new Date(y, m - 1, d) - new Date(a, b - 1, c)) / 86400000); }
+const fmtDay = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }); };
+function plan() {
+  const t = today(); let reviews = 0, fresh = 0;
+  for (const d of S.decks) for (const c of d.cards) { if (isNew(c)) fresh++; else if (c.due <= t) reviews++; }
+  const introduced = S.stats.newd[t] || 0;
+  const dleft = S.stats.examDate ? daysUntil(S.stats.examDate) : null;
+  /* Ohne Termin 25 neue Karten am Tag; mit Termin alle Karten bis 2 Tage vor der Prüfung verteilen */
+  let perDay = 25;
+  if (dleft != null && dleft > 0) perDay = Math.min(150, Math.max(10, Math.ceil((fresh + introduced) / Math.max(1, dleft - 2))));
+  const newToday = Math.max(0, Math.min(fresh, perDay - introduced));
+  return { reviews, fresh, introduced, perDay, newToday, todo: reviews + newToday, dleft };
+}
+function deckErr(d) { let ok = 0, bad = 0; for (const c of d.cards) { ok += c.ok; bad += c.bad; } return ok + bad ? bad / (ok + bad) : 0; }
+function pickNew(n) {
+  /* Prüfungsfragen und Drogen zuerst; Themen mit vielen Fehlern bekommen mehr neue Karten */
+  const groups = S.decks.map((d) => ({ d, list: d.cards.filter(isNew), taken: 0, w: (d.cards.some((c) => c.opts) || isDrugDeck(d) ? 1.6 : 1) * (1 + deckErr(d)) })).filter((g) => g.list.length);
+  const out = [];
+  while (out.length < n) {
+    let best = null, score = -1;
+    for (const g of groups) if (g.list.length) { const sc = (g.list.length * g.w) / (g.taken + 1); if (sc > score) { score = sc; best = g; } }
+    if (!best) break;
+    out.push(mkItem(best.d, best.list.shift())); best.taken++;
+  }
+  return out;
+}
+function startAuto() {
+  const p = plan(), t = today(), rev = [];
+  for (const d of S.decks) for (const c of d.cards) if (!isNew(c) && c.due <= t) rev.push(mkItem(d, c));
+  shuffle(rev); rev.sort((a, b) => a.box - b.box);
+  const nNew = Math.min(p.newToday, rev.length ? Math.max(6, SESSION_SIZE - Math.min(rev.length, 14)) : SESSION_SIZE);
+  const fresh = pickNew(nNew);
+  const queue = shuffle(rev.slice(0, SESSION_SIZE - fresh.length).concat(fresh));
+  if (!queue.length) { toast('Für heute ist alles geschafft.'); go('home'); return; }
+  beginSession('learn', null, queue);
+  S.session.auto = true;
+}
+function readiness() {
+  const prob = (c, unseen) => (!c.seen ? unseen : c.box >= 4 ? 0.95 : c.box === 3 ? 0.8 : c.box === 2 ? 0.6 : 0.3);
+  const avg = (list, unseen) => (list.length ? list.reduce((s, x) => s + prob(x.c, unseen), 0) / list.length : 0);
+  const points = Math.round(50 * avg(mcCards(), 0.2) + 15 * avg(drugCards(), 0.05));
+  return { points, last: S.stats.exams[S.stats.exams.length - 1] || null };
+}
+function markWeak(q) {
+  const deck = getDeck(q.d), card = deck && deck.cards.find((x) => x.id === q.c);
+  if (!card || !card.seen) return; /* neue Karten kommen ohnehin nach Plan */
+  card.box = 1; card.due = today(); card.bad++; card.last = 0;
+  persistDeck(deck.id);
+}
+function markRight(q) {
+  const deck = getDeck(q.d), card = deck && deck.cards.find((x) => x.id === q.c);
+  if (!card || !card.seen || card.last === 1) return;
+  card.last = 1; persistDeck(deck.id);
+}
+/* Text für die Übertragung nach Moodle: je Prüfungsteil die Kartennummern mit + (richtig) oder - (falsch) */
+function moodleCode() {
+  const groups = {}; let n = 0;
+  for (const d of S.decks) for (const c of d.cards) {
+    const tag = tagOf(c); if (!tag || !c.seen || !/^q\d+$/.test(c.id)) continue;
+    const right = c.last === 1 || (c.last == null && c.box >= 2);
+    (groups[tag[0]] = groups[tag[0]] || []).push(parseInt(c.id.slice(1), 10) + (right ? '+' : '-')); n++;
+  }
+  const lines = Object.keys(groups).sort().map((L) => `${L}: ${groups[L].sort((a, b) => parseInt(a, 10) - parseInt(b, 10)).join(' ')}`);
+  return { n, text: [`OTC-MOODLE 1 · ${today()}`, ...lines].join('\n') };
+}
+async function moodleCopy() {
+  const { n, text } = moodleCode(), box = byId('moodle-box'); if (!box) return;
+  if (!n) { toast('Du hast noch keine Prüfungsfrage beantwortet.'); return; }
+  let copied = false;
+  try { await navigator.clipboard.writeText(text); copied = true; } catch { /* manuell kopieren */ }
+  box.hidden = false;
+  box.innerHTML = `<p class="hint">${copied ? '<b>Kopiert.</b> Füge den Text im Chat mit Claude ein.' : 'Markiere den Text und kopiere ihn, dann füge ihn im Chat mit Claude ein.'}</p>
+    <textarea id="moodle-code" rows="4" readonly>${esc(text)}</textarea>
+    ${navigator.share ? '<button class="btn small" type="button" data-act="moodle-share">Teilen …</button>' : ''}`;
+  const ta = byId('moodle-code'); ta.focus(); ta.select();
+}
+function recordExam(s) {
+  if (s.kind !== 'exam' || s.recorded) return;
+  s.recorded = true;
+  S.stats.exams = S.stats.exams.concat({ date: today(), score: s.res.ok, max: s.qs.length }).slice(-20);
+  persistStats();
+}
+
+/* ---------- Speichern im Konto (db) ---------- */
+const Store = {
+  db: null, jobs: new Map(), deleted: new Set(),
+  isPending(path) { return this.jobs.has(path); },
+  queue(path, getData, delay = 1200) {
+    let j = this.jobs.get(path);
+    if (!j) { j = { timer: null, hold: null, inflight: false, again: false, retried: false, last: Date.now(), getData }; this.jobs.set(path, j); }
+    j.getData = getData; clearTimeout(j.hold); j.hold = null;
+    if (j.inflight) j.again = true;
+    else { clearTimeout(j.timer); j.timer = setTimeout(() => this.flush(path), Date.now() - j.last > 5000 ? 0 : delay); }
+    renderStatus();
+  },
+  async flush(path) {
+    const j = this.jobs.get(path);
+    if (!j || j.inflight) return;
+    clearTimeout(j.timer); j.timer = null; j.inflight = true; j.again = false; j.last = Date.now();
+    let retry = false;
+    try {
+      const data = j.getData();
+      if (data === null) await this.db.doc(path).delete();
+      else if (data !== undefined) await this.db.doc(path).set(data);
+      j.retried = false;
+      S.saveError = '';
+    } catch (e) {
+      if (e && e.code === 'unavailable' && !j.retried) { j.retried = true; retry = true; }
+      else { const msg = dbErrText(e); if (msg !== S.saveError) toast(msg); S.saveError = msg; }
+    }
+    j.inflight = false;
+    if (retry || j.again) j.timer = setTimeout(() => this.flush(path), retry ? 800 + Math.random() * 1200 : 0);
+    else j.hold = setTimeout(() => { if (!j.inflight && !j.timer) { this.jobs.delete(path); renderStatus(); } }, 1500);
+    renderStatus();
+  },
+  flushAll() { for (const [p, j] of this.jobs) if (j.timer) this.flush(p); },
+};
+function dbErrText(e) {
+  switch (e && e.code) {
+    case 'quota_exceeded': return 'Der Speicher ist voll. Lösche alte Stapel oder Karten.';
+    case 'invalid_argument': return 'Speichern wurde abgelehnt. Lade die Seite neu.';
+    case 'revoked': case 'not_granted': return 'Kein Zugriff mehr auf den Speicher. Lade die Seite neu.';
+    case 'resource_exhausted': return 'Zu viele Änderungen auf einmal. Warte einen Moment.';
+    default: return 'Verbindung unterbrochen. Deine letzte Änderung ist noch nicht gespeichert.';
+  }
+}
+
+let localTimer = null;
+function saveLocalSoon() { clearTimeout(localTimer); localTimer = setTimeout(saveLocal, 300); }
+function saveLocal() {
+  clearTimeout(localTimer); localTimer = null;
+  try { localStorage.setItem(LOCAL_KEY, JSON.stringify({ decks: S.decks.map((d) => ({ id: d.id, ...serializeDeck(d) })), stats: S.stats })); }
+  catch { if (!S.saveError) toast('Dieser Browser speichert gerade nichts. Dein Fortschritt geht beim Schließen verloren.'); S.saveError = 'Browser-Speicher nicht verfügbar'; }
+}
+function persistDeck(id) {
+  if (S.mode === 'cloud') Store.queue('decks/' + id, () => { const d = getDeck(id); return d ? serializeDeck(d) : undefined; });
+  else saveLocalSoon();
+}
+function dropDeck(id) {
+  S.decks = S.decks.filter((d) => d.id !== id);
+  if (S.mode === 'cloud') { Store.deleted.add(id); Store.queue('decks/' + id, () => null, 0); }
+  else saveLocalSoon();
+}
+function persistStats() {
+  if (S.mode === 'cloud') Store.queue('meta/stats', () => ({ goal: S.stats.goal, history: S.stats.history, newd: S.stats.newd, examDate: S.stats.examDate, exams: S.stats.exams }), 1500);
+  else saveLocalSoon();
+}
+function bump() {
+  const t = today(); S.stats.history[t] = (S.stats.history[t] || 0) + 1;
+  const keys = Object.keys(S.stats.history);
+  if (keys.length > 400) { keys.sort(); for (const k of keys.slice(0, keys.length - 400)) delete S.stats.history[k]; }
+  persistStats();
+}
+
+function startLocal(reason) {
+  S.mode = 'local'; S.localReason = reason;
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if (raw) { const o = JSON.parse(raw); S.decks = (Array.isArray(o.decks) ? o.decks : []).map((d) => normalizeDeck(String(d.id || uid()), d)).sort(deckOrder); S.stats = normalizeStats(o.stats); }
+    else if (window.OTC_DATA && window.OTC_DATA.stats) S.stats = normalizeStats(window.OTC_DATA.stats);
+  } catch { /* leerer Kasten */ }
+  if (window.OTC_DATA && Array.isArray(window.OTC_DATA.decks)) {
+    const have = new Set(S.decks.map((d) => d.id));
+    for (const d of window.OTC_DATA.decks) if (d && d.id && !have.has(d.id)) S.decks.push(normalizeDeck(String(d.id), d));
+    S.decks.sort(deckOrder);
+  }
+  markReady();
+}
+function mergeDecks(snap) {
+  const incoming = new Map();
+  for (const doc of snap.docs) if (doc.exists) incoming.set(doc.id, normalizeDeck(doc.id, doc.data()));
+  const out = [];
+  for (const [id, d] of incoming) {
+    if (Store.deleted.has(id)) continue;
+    out.push(Store.isPending('decks/' + id) ? (getDeck(id) || d) : d);
+  }
+  for (const d of S.decks) if (!incoming.has(d.id) && !Store.deleted.has(d.id) && Store.isPending('decks/' + d.id)) out.push(d);
+  S.decks = out.sort(deckOrder);
+}
+function startCloud(db) {
+  Store.db = db; S.mode = 'cloud';
+  let gotDecks = false, gotStats = false, dead = false;
+  const unsubs = [];
+  const giveUp = () => {
+    if (S.ready || dead) return;
+    dead = true; unsubs.forEach((u) => { try { u(); } catch { /* schon beendet */ } });
+    Store.db = null;
+    startLocal('Dein Konto-Speicher antwortet gerade nicht. Was du jetzt lernst, bleibt nur in diesem Browser.');
+  };
+  const timer = setTimeout(giveUp, 15000);
+  const onErr = (e) => { if (!S.ready) { clearTimeout(timer); giveUp(); return; } S.saveError = dbErrText(e); renderStatus(); };
+  const update = () => { if (dead || !gotDecks || !gotStats) return; if (!S.ready) { clearTimeout(timer); markReady(); } else refresh(); };
+  try {
+    unsubs.push(db.collection('decks').onSnapshot((snap) => { if (dead) return; mergeDecks(snap); gotDecks = true; update(); }, onErr));
+    unsubs.push(db.doc('meta/stats').onSnapshot((snap) => { if (dead) return; if (!Store.isPending('meta/stats')) S.stats = normalizeStats(snap.exists ? snap.data() : null); gotStats = true; update(); }, onErr));
+  } catch { clearTimeout(timer); giveUp(); }
+}
+function markReady() { S.ready = true; restoreHot(); render(); }
+
+/* ---------- Ansichten ---------- */
+const boxArt = (cls = '') => `<div class="box-art ${cls}" aria-hidden="true"><i style="--h:58%"></i><i style="--h:76%"></i><i style="--h:50%"></i><i style="--h:84%"></i><i style="--h:64%"></i></div>`;
+const viewLoading = () => `<div class="loading">${boxArt('is-loading')}<p>Dein Kasten wird geöffnet …</p></div>`;
+
+function viewEmpty() {
+  return `<section class="empty">
+    ${boxArt()}
+    <div class="stack" style="gap:10px">
+      <p class="eyebrow">Sachkunde freiverkäufliche Arzneimittel</p>
+      <h1>Noch keine Karten im Kasten</h1>
+      <p class="lead">Lege einen Stapel an und schreib deine Karten, einzeln oder viele auf einmal.</p>
+    </div>
+    <button class="btn primary big" type="button" data-act="new-deck">Neuen Stapel anlegen</button>
+    <ol class="how">
+      <li><b>Karten anlegen.</b> Vorderseite eine Frage, Rückseite die Antwort.</li>
+      <li><b>Täglich die fälligen Karten lernen.</b> Karte ansehen, umdrehen, ehrlich bewerten.</li>
+      <li><b>Gewusste Karten wandern weiter.</b> Fach für Fach kommen sie seltener dran, bis sie in Fach 5 sitzen.</li>
+    </ol>
+  </section>`;
+}
+
+function weekDays() {
+  const t = today(), out = [];
+  for (let i = 6; i >= 0; i--) {
+    const k = addDays(t, -i); const [y, m, d] = k.split('-').map(Number);
+    out.push({ k, n: S.stats.history[k] || 0, label: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'][new Date(y, m - 1, d).getDay()], isToday: i === 0 });
+  }
+  return out;
+}
+
+function viewHome() {
+  if (!S.decks.length) return viewEmpty();
+  const t = today(), p = plan(), goal = S.stats.goal, done = S.stats.history[t] || 0, streak = calcStreak();
+  const boxes = [1, 2, 3, 4, 5].map((b) => ({ b, n: 0, due: 0 }));
+  let fresh = 0;
+  for (const d of S.decks) for (const c of d.cards) { if (isNew(c)) { fresh++; continue; } boxes[c.box - 1].n++; if (c.due <= t) boxes[c.box - 1].due++; }
+  const max = Math.max(1, fresh, ...boxes.map((x) => x.n));
+  const streakText = streak === 0 ? 'Noch keine Lernserie. Heute ist ein guter Start.'
+    : !S.stats.history[t] ? `${streak === 1 ? 'Tag' : 'Tage'} in Folge. Lern heute, damit die Serie hält.`
+    : `${streak === 1 ? 'Tag' : 'Tage'} in Folge gelernt`;
+  const drugDeck = S.decks.find(isDrugDeck);
+  const dateText = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+  const r = readiness(), total = done + p.todo;
+  const examTime = !p.fresh || (p.dleft != null && p.dleft >= 0 && p.dleft <= 3);
+  const parts = [p.reviews ? pl(Math.min(p.reviews, p.todo), 'Wiederholung', 'Wiederholungen') : '', p.newToday ? `${p.newToday} neue` : ''].filter(Boolean).join(' · ');
+  const main = p.todo
+    ? `<div class="due"><span class="due-num">${p.todo}</span><span class="due-label">${p.todo === 1 ? 'Karte' : 'Karten'} für heute</span></div>
+      <p class="hint">${parts}. Die App mischt die Runden selbst, schwache Themen kommen öfter.</p>
+      <button class="btn primary big" type="button" data-act="auto">Los geht's</button>`
+    : `<p class="done-msg">Für heute ist alles geschafft.</p>
+      <p class="hint">${examTime ? 'Jetzt zählt die Prüfungsroutine: Mach eine Generalprobe.' : 'Morgen kommen die nächsten neuen Karten dazu.'}</p>
+      <div class="row">${hasExam() ? `<button class="btn ${examTime ? 'primary ' : ''}big" type="button" data-act="exam-start">Generalprobe</button>` : ''}<button class="btn big" type="button" data-act="practice-all">Trotzdem üben</button></div>`;
+  const dateHint = p.dleft == null ? 'Trag den Termin ein, dann verteilt die App alle Karten bis dahin.'
+    : p.dleft < 0 ? 'Der Termin liegt in der Vergangenheit.'
+    : p.dleft === 0 ? 'Heute ist Prüfung. Viel Erfolg!'
+    : `noch ${pl(p.dleft, 'Tag', 'Tage')} · ${p.perDay} neue Karten pro Tag`;
+  const readyHint = (r.points >= 40 ? 'Du liegst sicher über der Bestehensgrenze.' : r.points >= 33 ? 'Knapp über der Grenze, weiter so.' : `Noch ${33 - r.points} Punkte bis zur Bestehensgrenze.`)
+    + (r.last ? ` Letzte Generalprobe: ${r.last.score} von ${r.last.max} (${fmtDay(r.last.date)}).` : '');
+  return `<div class="stack">
+  ${syncNotice()}
+  <section class="today" aria-labelledby="today-h">
+    <div class="today-main">
+      <p class="eyebrow" id="today-h">${esc(dateText)}</p>
+      ${main}
+    </div>
+    <div class="today-side">
+      <div>
+        <div class="goal-top"><span><b>Heute</b></span><span class="tnum"><b>${done}</b> erledigt${p.todo ? ` · ${p.todo} offen` : ''}</span></div>
+        <div class="meter ${!p.todo && done ? 'done' : ''}"><span style="width:${total ? (done / total) * 100 : 0}%"></span></div>
+      </div>
+      <div class="streak"><span class="streak-n">${streak}</span><span>${esc(streakText)}</span></div>
+      <div class="week" role="img" aria-label="Gelernte Karten an den letzten 7 Tagen">${weekDays().map((d) => `<div class="day ${d.isToday ? 'is-today' : ''} ${d.n >= goal ? 'goal' : ''}" title="${d.n} Karten"><span class="day-track"><span class="day-fill" style="--h:${Math.min(1, d.n / goal)}"></span></span><span class="day-l">${d.label}</span></div>`).join('')}</div>
+    </div>
+  </section>
+  <section class="exam" aria-labelledby="exam-h">
+    <div class="exam-top">
+      <div><p class="eyebrow" id="exam-h">IHK-Sachkundeprüfung</p><p class="exam-facts"><b>50</b> Fragen · <b>15</b> Drogen am Bild · <b>75</b> Min. · bestanden ab <b>33</b> von 65 Punkten</p></div>
+      <div class="row">${hasExam() ? `<button class="btn ${examTime ? 'primary' : ''}" type="button" data-act="exam-start">Generalprobe</button>` : ''}${drugDeck ? `<button class="btn" type="button" data-act="drug-probe" data-id="${esc(drugDeck.id)}">Drogen-Probe</button>` : ''}</div>
+    </div>
+    <div>
+      <div class="goal-top"><span><b>Prüfungsreife</b> <span class="hint">geschätzt</span></span><span class="tnum"><b>${r.points}</b> von 65 Punkten</span></div>
+      <div class="meter ready-meter ${r.points >= 33 ? 'done' : ''}"><span style="width:${(r.points / 65) * 100}%"></span><i style="left:${(33 / 65) * 100}%" title="Bestehensgrenze: 33 Punkte"></i></div>
+      <p class="hint" style="margin-top:6px">${esc(readyHint)}</p>
+    </div>
+    <div class="examdate">
+      <label for="exam-date">Prüfungstermin</label>
+      <input type="date" id="exam-date" value="${esc(S.stats.examDate || '')}" min="${t}">
+      <span class="hint">${esc(dateHint)}</span>
+    </div>
+    ${mcCards().length ? `<div class="moodle-row"><button class="btn small" type="button" data-act="moodle-copy">Stand für Moodle kopieren</button><span class="hint">${pl(mcCards().filter((x) => x.c.seen).length, 'Prüfungsfrage', 'Prüfungsfragen')} beantwortet</span></div>
+    <div class="moodle-box" id="moodle-box" hidden></div>` : ''}
+  </section>
+  <section aria-labelledby="kasten-h">
+    <div class="sec-head"><h2 id="kasten-h">Dein Kasten</h2><p class="hint">Neue Karten kommen nach Plan dazu. Gewusst: Die Karte rückt ein Fach weiter und kommt seltener dran. Nicht gewusst: zurück in Fach 1.</p></div>
+    <div class="faecher">
+      <div class="fach">
+        <div class="slot"><div class="fill" style="--fc:var(--faint);height:${fresh ? Math.max(5, (fresh / max) * 100) : 0}%"></div></div>
+        <span class="fach-n">${fresh}</span><span class="fach-name">Neu</span><span class="fach-int">noch nicht gelernt</span>
+      </div>
+      ${boxes.map((x) => `<div class="fach">
+      <div class="slot"><div class="fill" style="--fc:var(--f${x.b});height:${x.n ? Math.max(5, (x.n / max) * 100) : 0}%"></div></div>
+      <span class="fach-n">${x.n}</span><span class="fach-name">Fach ${x.b}</span><span class="fach-int">${FACH_INT[x.b]}</span>${x.due ? `<span class="fach-due">${x.due} fällig</span>` : ''}
+    </div>`).join('')}</div>
+  </section>
+  <section aria-labelledby="stapel-h">
+    <div class="sec-head row"><h2 id="stapel-h">Stapel</h2><button class="btn small" type="button" data-act="new-deck">Neuer Stapel</button></div>
+    <p class="hint" style="margin:-4px 0 4px">Hier kannst du gezielt einzelne Themen lernen. Normalerweise reicht der Knopf oben.</p>
+    <ul class="decks">${S.decks.map(deckItem).join('')}</ul>
+  </section>
+  ${S.mode === 'cloud' ? '<p class="hint sync-note">Dein Lernstand liegt in deinem Claude-Konto. Öffne diesen Link auf jedem Gerät, auf dem du bei Claude angemeldet bist: Handy, Tablet und PC zeigen denselben Stand.</p>' : ''}
+  </div>`;
+}
+
+function syncNotice() {
+  if (S.mode !== 'local' || window.OTC_DATA) return '';
+  return `<div class="notice" role="note"><b>Nur auf diesem Gerät gespeichert.</b> ${esc(S.localReason)}</div>`;
+}
+
+function deckItem(d, i) {
+  const t = today(), total = d.cards.length;
+  const fresh = d.cards.filter(isNew).length;
+  const due = d.cards.filter((c) => !isNew(c) && c.due <= t).length;
+  const counts = [0, 0, 0, 0, 0]; d.cards.forEach((c) => { if (!isNew(c)) counts[c.box - 1]++; });
+  const id = esc(d.id);
+  const canTest = total >= 4;
+  return `<li class="deck" style="--tab:${(i % 4) * 17}%">
+    <span class="deck-tab ${due ? 'has-due' : ''}">${due ? `${due} fällig` : fresh ? `${fresh} neu` : total ? 'erledigt' : 'leer'}</span>
+    <div class="deck-body">
+      <div class="deck-title"><h3>${esc(d.name)}</h3></div>
+      <p class="deck-meta">${pl(total, 'Karte', 'Karten')}${fresh && fresh < total ? ` · ${fresh} noch neu` : ''}${counts[4] ? ` · ${counts[4]} in Fach 5` : ''}</p>
+      ${total ? `<div class="minibar" role="img" aria-label="Neu: ${fresh}, ${counts.map((n, j) => `Fach ${j + 1}: ${n}`).join(', ')}">${counts.map((n, j) => (n ? `<span style="flex:${n};--fc:var(--f${j + 1})"></span>` : '')).join('')}${fresh ? `<span style="flex:${fresh};--fc:var(--line)"></span>` : ''}</div>` : ''}
+      <div class="deck-actions">
+        ${due || fresh ? `<button class="btn primary small" type="button" data-act="deck-learn" data-id="${id}">Lernen</button>`
+          : total ? `<button class="btn small" type="button" data-act="deck-practice" data-id="${id}">Üben</button>`
+          : `<button class="btn primary small" type="button" data-act="deck-edit" data-id="${id}">Karten hinzufügen</button>`}
+        ${canTest ? `<button class="btn small" type="button" data-act="deck-test" data-id="${id}">Test</button>` : ''}
+        ${isDrugDeck(d) ? `<button class="btn small" type="button" data-act="drug-probe" data-id="${id}">Drogen-Probe</button>` : ''}
+        <button class="btn ghost small" type="button" data-act="deck-edit" data-id="${id}">Bearbeiten</button>
+      </div>
+    </div>
+  </li>`;
+}
+
+function topBar(pos, total, extra = '') {
+  return `<div class="study-top">
+    <button class="btn ghost small" type="button" data-act="quit">Beenden</button>
+    <div class="bar" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${pos}"><span style="width:${(pos / Math.max(1, total)) * 100}%"></span></div>
+    <span class="count">${Math.min(pos + 1, total)} / ${total}${extra}</span>
+  </div>`;
+}
+
+function currentStudyItem() {
+  const s = S.session;
+  if (!s || !Array.isArray(s.queue)) return null;
+  while (s.pos < s.queue.length && !getCard(s.queue[s.pos].d, s.queue[s.pos].c)) s.pos++;
+  return s.queue[s.pos] || null;
+}
+function qHTML(card, rev, bare = false) {
+  if (card.img && !rev) return `<img class="cimg" src="${esc(imgSrc(card.img))}" alt="Foto einer Arzneidroge"><p class="qprompt">${esc(card.f)}</p>`;
+  const q = rev ? card.b : card.f;
+  let h = `<p class="qtext ${sizeClass(q)}">${esc(q)}</p>`;
+  if (card.opts && !rev && !bare) h += `<ol class="qopts" type="a">${card.opts.map((o) => `<li>${esc(o)}</li>`).join('')}</ol>`;
+  return h;
+}
+function aHTML(card, rev) {
+  const q = rev ? card.b : card.f, a = rev ? card.f : card.b;
+  let h = card.img && !rev ? `<img class="cimg small" src="${esc(imgSrc(card.img))}" alt="">` : `<p class="qsmall">${esc(q)}</p>`;
+  h += `<p class="atext ${sizeClass(a)}">${esc(a)}</p>`;
+  if (card.n) h += `<p class="anote">${esc(card.n)}</p>`;
+  return h;
+}
+function studyActions() {
+  const s = S.session, item = currentStudyItem();
+  if (item && item.opts) {
+    /* Antippen statt Umdrehen: die App prüft die Antwort selbst */
+    const card = getCard(item.d, item.c), picked = s.mcPick, done = picked != null;
+    const right = done && item.opts[picked] === card.b;
+    const btns = item.opts.map((o, i) => {
+      const cls = done ? (o === card.b ? 'is-right' : i === picked ? 'is-wrong' : 'is-dim') : '';
+      return `<button class="choice ${cls}" type="button" data-act="mc-pick" data-i="${i}" ${done ? 'disabled' : ''}><span class="choice-key">${'abcdefgh'[i]}</span><span class="choice-text">${esc(o)}</span></button>`;
+    }).join('');
+    const fb = !done ? '' : `<div class="mc-feedback" role="status"><p class="verdict ${right ? 'ok' : 'bad'}">${right ? 'Richtig!' : 'Leider falsch. Grün ist richtig.'}</p>${card.n ? `<p class="anote">${esc(card.n)}</p>` : ''}</div>
+      <button class="btn ${right ? '' : 'primary'} big wide" type="button" id="mc-next" data-act="mc-next">Weiter</button>
+      ${S.sample ? '<button class="btn ghost small" type="button" data-act="explain">Erklären lassen</button>' : ''}`;
+    return `<div class="mc-opts" role="group" aria-label="Antwort antippen">${btns}</div>${fb}`;
+  }
+  if (!s.revealed) return `<button class="btn primary big wide" type="button" data-act="flip">Antwort zeigen</button><p class="kbd-hint hint"><kbd>Leertaste</kbd> dreht die Karte um</p>`;
+  return `<div class="answer-row">
+      <button class="btn bad big" type="button" data-act="wrong">Nicht gewusst <kbd>1</kbd></button>
+      <button class="btn ok big" type="button" data-act="right">Gewusst <kbd>2</kbd></button>
+    </div>
+    ${S.sample ? '<button class="btn ghost small" type="button" data-act="explain">Erklären lassen</button>' : ''}`;
+}
+function viewStudy() {
+  const s = S.session, item = currentStudyItem();
+  const deck = getDeck(item.d), card = getCard(item.d, item.c);
+  const rev = !!item.rev && !card.img, choice = !!item.opts;
+  return `<div class="study">
+    ${topBar(s.pos, s.queue.length)}
+    ${s.kind === 'practice' ? '<p class="mode-note">Übungsrunde: Die Fächer bleiben, wie sie sind.</p>' : ''}
+    <div class="stage enter">
+      <div class="icard ${s.flipped && !choice ? 'flipped' : ''} ${choice ? 'static compact' : ''}" id="icard" ${choice ? '' : 'data-act="flip" role="button" tabindex="0" aria-label="Karte umdrehen"'}>
+        <div class="face front" aria-hidden="${s.flipped && !choice}">
+          <div class="icard-head"><span class="hand">${esc(deck.name)}</span><span class="stamp">Fach ${card.box}</span></div>
+          <div class="icard-body">${qHTML(card, rev, choice)}</div>
+        </div>
+        <div class="face back" aria-hidden="${!s.flipped}">
+          <div class="icard-head"><span class="hand">Antwort</span><span class="stamp">Fach ${card.box}</span></div>
+          <div class="icard-body">${aHTML(card, rev)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="study-actions" id="study-actions">${studyActions()}</div>
+    <div class="explain" id="explain" ${s.explain ? '' : 'hidden'}><p class="eyebrow">Claude erklärt</p><p class="explain-text" id="explain-text">${esc(s.explain || '')}</p></div>
+  </div>`;
+}
+
+function viewTest() {
+  const s = S.session, q = s.qs[s.pos], deck = getDeck(s.deckIds[0]), exam = s.kind === 'exam';
+  const picked = s.picked != null, ok = picked && q.options[s.picked] === q.a, last = s.pos === s.qs.length - 1;
+  return `<div class="study">
+    ${topBar(s.pos, s.qs.length, examExtra(s))}
+    <div class="stage ${picked ? '' : 'enter'}"><div class="icard static"><div class="face front">
+      <div class="icard-head"><span class="hand">${esc(exam ? 'Generalprobe' : deck?.name || 'Test')}</span><span class="stamp">${esc(q.tag || 'Test')}</span></div>
+      <div class="icard-body">${q.img ? `<img class="cimg" src="${esc(imgSrc(q.img))}" alt="Foto einer Arzneidroge"><p class="qprompt">${esc(q.q)}</p>` : `<p class="qtext ${sizeClass(q.q)}">${esc(q.q)}</p>`}</div>
+    </div></div></div>
+    <div class="options" role="group" aria-label="Antwortmöglichkeiten">${q.options.map((o, i) => {
+      const cls = picked ? (o === q.a ? 'is-right' : i === s.picked ? 'is-wrong' : '') : '';
+      return `<button class="opt ${cls}" type="button" data-act="pick" data-i="${i}" ${picked ? 'disabled' : ''}><kbd>${i + 1}</kbd><span>${esc(o)}</span></button>`;
+    }).join('')}</div>
+    <div class="test-foot">${picked ? `<p class="verdict ${ok ? 'ok' : 'bad'}">${ok ? 'Richtig.' : 'Leider falsch.'}</p><button class="btn primary big" type="button" id="next-btn" data-act="next">${last ? 'Ergebnis ansehen' : 'Weiter'}</button>` : ''}</div>
+  </div>`;
+}
+
+function viewDrug() {
+  const s = S.session, q = s.qs[s.pos], last = s.pos === s.qs.length - 1;
+  const allSel = q.groups.every((g) => q.sel[g.key] != null);
+  const ok = q.checked && q.groups.every((g) => g.options[q.sel[g.key]] === g.a);
+  const fresh = !q.checked && !Object.keys(q.sel).length;
+  return `<div class="study">
+    ${topBar(s.pos, s.qs.length, examExtra(s))}
+    <div class="stage ${fresh ? 'enter' : ''}"><figure class="drug-photo"><img src="${esc(imgSrc(q.img))}" alt="Foto einer Arzneidroge"><figcaption>Droge ${q.di || s.pos + 1} von ${q.dn || s.qs.length} · bestimme die Droge</figcaption></figure></div>
+    <div class="groups">${q.groups.map((g, gi) => `<fieldset class="grp"><legend>${esc(g.label)}</legend><div class="chips">${g.options.map((o, oi) => {
+      const sel = q.sel[g.key] === oi;
+      const cls = q.checked ? (o === g.a ? 'is-right' : sel ? 'is-wrong' : '') : sel ? 'is-sel' : '';
+      return `<button class="chipbtn ${cls}" type="button" data-act="drug-sel" data-g="${gi}" data-o="${oi}" aria-pressed="${sel}" ${q.checked ? 'disabled' : ''}>${esc(o)}</button>`;
+    }).join('')}</div></fieldset>`).join('')}</div>
+    <div class="test-foot">${q.checked
+      ? `<p class="verdict ${ok ? 'ok' : 'bad'}">${ok ? 'Alles richtig: 1 Punkt.' : `Nicht ganz. Das ist ${esc(q.name)}.`}</p><button class="btn primary big" type="button" id="next-btn" data-act="drug-next">${last ? 'Ergebnis ansehen' : 'Nächstes Bild'}</button>`
+      : `<button class="btn primary big" type="button" data-act="drug-check" ${allSel ? '' : 'disabled'}>Prüfen</button>${allSel ? '' : '<p class="hint">Wähle in jeder Zeile eine Antwort.</p>'}`}</div>
+  </div>`;
+}
+
+function viewSummary() {
+  const s = S.session;
+  if (s.kind === 'test' || s.kind === 'drug' || s.kind === 'exam') return viewTestSummary();
+  const r = s.res, n = r.ok + r.bad, failedN = Object.keys(s.failed).length;
+  const moreDue = s.kind !== 'learn' ? 0 : s.auto ? plan().todo : countDue(s.deckIds);
+  const done = S.stats.history[today()] || 0, goal = S.stats.goal;
+  return `<section class="summary">
+    <p class="eyebrow">${s.kind === 'practice' ? 'Übungsrunde beendet' : 'Runde beendet'}</p>
+    <h1><span class="score">${r.ok}</span> von ${n} gewusst</h1>
+    <div class="dots" aria-hidden="true">${s.log.map((x) => `<span class="${x ? '' : 'bad'}"></span>`).join('')}</div>
+    ${s.kind === 'learn' ? `<ul class="moves">
+      <li><b>${r.up}</b>&nbsp;${r.up === 1 ? 'Karte rückt' : 'Karten rücken'} ein Fach weiter.</li>
+      ${failedN ? `<li><b>${failedN}</b>&nbsp;${failedN === 1 ? 'Karte startet' : 'Karten starten'} wieder in Fach 1.</li>` : ''}
+    </ul>` : ''}
+    <p>${s.auto ? (moreDue ? `Heute noch ${pl(moreDue, 'Karte', 'Karten')} offen.` : 'Für heute ist alles geschafft.') : done >= goal ? `Tagesziel erreicht: ${done} von ${goal} Karten heute.` : `Heute ${done} von ${goal} Karten.`}</p>
+    <div class="row">
+      ${moreDue ? `<button class="btn primary" type="button" data-act="continue">Weiter (${moreDue} offen)</button>` : ''}
+      ${s.auto && !moreDue && hasExam() ? '<button class="btn primary" type="button" data-act="exam-start">Generalprobe machen</button>' : ''}
+      ${failedN ? `<button class="btn" type="button" data-act="again-failed">Falsche Karten üben</button>` : ''}
+      <button class="btn ${moreDue ? 'ghost' : 'primary'}" type="button" data-act="home">Zur Übersicht</button>
+    </div>
+  </section>`;
+}
+function viewTestSummary() {
+  const s = S.session, n = s.log.length, ok = s.res.ok, deck = getDeck(s.deckIds[0]), kind = s.kind;
+  const pct = n ? Math.round((ok / n) * 100) : 0;
+  const isDrugQ = (q) => kind === 'drug' || q.t === 'drug';
+  let head, extra = '';
+  if (kind === 'exam') {
+    const finished = n === s.qs.length, pass = ok >= 33;
+    const mcN = s.qs.filter((q) => q.t === 'mc').length, drN = s.qs.length - mcN;
+    const mcOk = s.log.filter((x, i) => x && s.qs[i].t === 'mc').length, drOk = ok - mcOk;
+    const mins = Math.max(1, Math.round((Date.now() - s.startedAt) / 60000));
+    head = `<p class="eyebrow">Generalprobe ${finished ? 'beendet' : 'abgebrochen'}</p>
+      <h1><span class="score">${ok}</span> von ${s.qs.length} Punkten</h1>
+      <div class="row"><span class="pill ${pass ? 'ok' : 'bad'}">${pass ? 'Bestanden' : 'Nicht bestanden'}</span><span class="hint">bestanden ab 33 Punkten · ${mins} von 75 Min.</span></div>
+      <p>Fragen: <b>${mcOk}</b> von ${mcN} · Drogen: <b>${drOk}</b> von ${drN}</p>`;
+  } else {
+    head = `<p class="eyebrow">${kind === 'drug' ? 'Drogen-Probe beendet' : 'Test beendet'} · ${esc(deck?.name || '')}</p>
+      <h1><span class="score">${ok}</span> von ${n} ${kind === 'drug' ? 'Punkten' : 'richtig'}</h1>`;
+    extra = `<p class="lead">${pct >= 80 ? 'Sehr sicher. Das sitzt.' : pct >= 50 ? 'Solide. Ein paar Punkte brauchen noch Wiederholung.' : 'Hier lohnt sich eine Lernrunde.'}</p>`;
+  }
+  const again = kind === 'exam' ? 'data-act="exam-start">Neue Generalprobe'
+    : kind === 'drug' ? `data-act="drug-probe" data-id="${esc(s.deckIds[0])}">Neue Drogen-Probe`
+    : `data-act="deck-test" data-id="${esc(s.deckIds[0])}">Neuer Test`;
+  return `<section class="summary">
+    ${head}
+    <div class="dots" aria-hidden="true">${s.log.map((x) => `<span class="${x ? '' : 'bad'}"></span>`).join('')}</div>
+    ${extra}
+    ${s.wrong.length ? `<div class="mistakes"><h2>Das war falsch</h2><ul>${s.wrong.map((i) => {
+      const q = s.qs[i];
+      if (isDrugQ(q)) return `<li><p class="cf">${esc(q.name)}</p><p class="cb">${q.groups.filter((g) => g.key !== 'name').map((g) => `${esc(g.label)}: ${esc(g.a)}`).join('<br>')}</p></li>`;
+      return `<li><p class="cf">${q.tag ? esc(q.tag) + ' · ' : ''}${q.img ? 'Bild: ' : ''}${esc(q.q)}</p><p class="cb">Richtig: ${esc(q.a)}</p></li>`;
+    }).join('')}</ul></div>` : ''}
+    <div class="row">
+      <button class="btn primary" type="button" ${again}</button>
+      <button class="btn ghost" type="button" data-act="home">Zur Übersicht</button>
+    </div>
+  </section>`;
+}
+
+function deckStatsHTML(d) {
+  const t = today(), due = d.cards.filter((c) => c.due <= t).length;
+  return `${pl(d.cards.length, 'Karte', 'Karten')} · ${due} heute fällig`;
+}
+function cardRow(c) {
+  const id = esc(c.id), confirm = S.params.confirmDel === c.id;
+  return `<li class="crow">
+    <div class="crow-text">${c.img ? `<img src="${esc(imgSrc(c.img))}" alt="">` : ''}<div><p class="cf">${esc(c.f)}</p><p class="cb">${esc(c.b)}</p></div></div>
+    <div class="crow-side">
+      <span class="fchip" style="--fc:var(--f${c.box})">Fach ${c.box}</span>
+      ${confirm ? `<div class="crow-actions"><span class="hint">Löschen?</span><button class="btn bad small" type="button" data-act="card-del-yes" data-cid="${id}">Ja</button><button class="btn small" type="button" data-act="card-del-no">Nein</button></div>`
+        : `<div class="crow-actions"><button class="btn ghost small" type="button" data-act="card-edit" data-cid="${id}">Bearbeiten</button><button class="btn ghost small danger-text" type="button" data-act="card-del" data-cid="${id}">Löschen</button></div>`}
+    </div>
+  </li>`;
+}
+function cardEditRow(c) {
+  const id = esc(c.id);
+  return `<li class="crow editing"><div class="panel">
+    <div class="two">
+      <div class="field"><label for="ef-${id}">Vorderseite</label><textarea id="ef-${id}" rows="2">${esc(c.f)}</textarea></div>
+      <div class="field"><label for="eb-${id}">Rückseite</label><textarea id="eb-${id}" rows="2">${esc(c.b)}</textarea></div>
+    </div>
+    <div class="row"><button class="btn primary small" type="button" data-act="card-save" data-cid="${id}">Speichern</button><button class="btn small" type="button" data-act="card-cancel">Abbrechen</button></div>
+  </div></li>`;
+}
+function cardListHTML(d) {
+  if (!d.cards.length) return '<li class="list-empty">Noch keine Karten. Schreib oben deine erste Karte oder füge mehrere auf einmal ein.</li>';
+  const f = norm(S.params.filter || '');
+  const cards = [...d.cards].reverse().filter((c) => !f || norm(c.f + ' ' + c.b + ' ' + (c.n || '')).includes(f));
+  if (!cards.length) return `<li class="list-empty">Keine Karte passt zu „${esc(S.params.filter)}“.</li>`;
+  return cards.map((c) => (S.params.editing === c.id ? cardEditRow(c) : cardRow(c))).join('');
+}
+function dangerHTML() {
+  const c = S.params.confirm;
+  if (c === 'reset') return '<p>Alle Karten zurück in Fach 1 und heute fällig?</p><button class="btn bad" type="button" data-act="reset-yes">Ja, zurücksetzen</button><button class="btn" type="button" data-act="danger-no">Abbrechen</button>';
+  if (c === 'delete') return '<p>Den Stapel mit allen Karten endgültig löschen?</p><button class="btn bad" type="button" data-act="delete-yes">Ja, löschen</button><button class="btn" type="button" data-act="danger-no">Abbrechen</button>';
+  return '<button class="btn" type="button" data-act="danger" data-kind="reset">Fortschritt zurücksetzen</button><button class="btn danger-text" type="button" data-act="danger" data-kind="delete">Stapel löschen</button>';
+}
+function viewDeck() {
+  const d = getDeck(S.params.id);
+  return `<div class="deck-view">
+    <div><button class="btn ghost small" type="button" data-act="home">← Übersicht</button></div>
+    <div class="panel">
+      <div class="field"><label for="deck-name">Name des Stapels</label><input id="deck-name" type="text" maxlength="80" value="${esc(d.name)}"></div>
+      <div class="field"><label for="deck-dir">Abfragerichtung</label><select id="deck-dir">${Object.entries(DIRS).map(([k, v]) => `<option value="${k}" ${d.direction === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+      <p class="hint" id="deck-stats">${deckStatsHTML(d)}</p>
+    </div>
+    <section class="panel" aria-labelledby="add-h">
+      <h2 id="add-h">Neue Karte</h2>
+      <form id="add-form" class="panel">
+        <div class="two">
+          <div class="field"><label for="new-front">Vorderseite</label><textarea id="new-front" rows="2" placeholder="z. B. Welcher Wirkstoff steckt in Salbeiblättern?"></textarea></div>
+          <div class="field"><label for="new-back">Rückseite</label><textarea id="new-back" rows="2" placeholder="z. B. ätherische Öle"></textarea></div>
+        </div>
+        <div class="row"><button class="btn primary" type="submit">Karte hinzufügen</button><span class="hint kbd-hint"><kbd>Strg</kbd> + <kbd>Enter</kbd></span></div>
+      </form>
+      <details>
+        <summary>Mehrere Karten auf einmal einfügen</summary>
+        <div class="panel">
+          <p class="hint">Eine Karte pro Zeile. Trenne Vorder- und Rückseite mit Semikolon, Tabulator oder „ = “. Zwei Spalten aus Excel lassen sich direkt hineinkopieren.</p>
+          <textarea id="bulk-text" rows="6" placeholder="Eichenrinde ; Gerbstoffe&#10;Primelwurzel ; Saponine"></textarea>
+          <div><button class="btn" type="button" data-act="bulk-add">Karten einfügen</button></div>
+        </div>
+      </details>
+    </section>
+    <section class="panel" aria-labelledby="cards-h">
+      <div class="sec-head row" style="margin:0"><h2 id="cards-h">Karten</h2></div>
+      <div class="field" id="filter-field" ${d.cards.length >= 8 ? '' : 'hidden'}><label class="sr-only" for="card-filter">Karten durchsuchen</label><input id="card-filter" type="search" placeholder="Karten durchsuchen" value="${esc(S.params.filter || '')}"></div>
+      <ul class="card-list" id="card-list">${cardListHTML(d)}</ul>
+    </section>
+    <section class="panel" aria-labelledby="danger-h">
+      <h2 id="danger-h">Stapel verwalten</h2>
+      <div class="row" id="danger-row">${dangerHTML()}</div>
+    </section>
+  </div>`;
+}
+
+/* ---------- Rendern ---------- */
+function renderStatus() {
+  const el = byId('status'); if (!el) return;
+  let text = 'Lädt …', cls = 'busy', title = '';
+  if (S.ready) {
+    if (S.mode === 'local' && window.OTC_DATA) { text = 'Auf diesem Gerät'; cls = 'ok'; title = S.localReason; }
+    else if (S.mode === 'local') { text = 'Nur in diesem Browser'; cls = 'local'; title = S.localReason; }
+    else if (S.saveError) { text = 'Nicht gespeichert'; cls = 'err'; title = S.saveError; }
+    else if ([...Store.jobs.values()].some((j) => j.inflight || j.timer)) { text = 'Speichert …'; cls = 'busy'; }
+    else { text = 'Gespeichert'; cls = 'ok'; title = 'In deinem Claude-Konto gespeichert. Nur du siehst deine Karten.'; }
+  }
+  el.textContent = text; el.className = 'status ' + cls; el.title = title;
+}
+function render() {
+  renderStatus();
+  const app = byId('app');
+  if (!S.ready) { app.innerHTML = viewLoading(); return; }
+  const s = S.session;
+  if (S.view === 'study' && !currentStudyItem()) S.view = s && s.log && s.log.length ? 'summary' : 'home';
+  if ((S.view === 'test' || S.view === 'drug' || S.view === 'exam') && (!s || !Array.isArray(s.qs) || s.pos >= s.qs.length)) S.view = s && s.log && s.log.length ? 'summary' : 'home';
+  if (S.view === 'summary' && !s) S.view = 'home';
+  if (S.view === 'deck' && !getDeck(S.params.id)) S.view = 'home';
+  const views = { home: viewHome, study: viewStudy, summary: viewSummary, test: viewTest, drug: viewDrug, deck: viewDeck, exam: () => (S.session.qs[S.session.pos].t === 'drug' ? viewDrug() : viewTest()) };
+  app.innerHTML = (views[S.view] || viewHome)();
+  if (S.view === 'deck' && S.params.fresh) { S.params.fresh = false; const el = byId('deck-name'); if (el) { el.focus(); el.select(); } }
+  if ((S.view === 'test' || S.view === 'drug' || S.view === 'exam') && byId('next-btn')) byId('next-btn').focus({ preventScroll: true });
+}
+function refresh() {
+  if (S.view === 'home') render();
+  else if (S.view === 'deck') { if (!getDeck(S.params.id)) go('home'); else renderCardList(); }
+  else renderStatus();
+}
+function renderCardList() {
+  const d = getDeck(S.params.id), list = byId('card-list'); if (!d || !list) return;
+  list.innerHTML = cardListHTML(d);
+  const st = byId('deck-stats'); if (st) st.innerHTML = deckStatsHTML(d);
+  const ff = byId('filter-field'); if (ff) ff.hidden = d.cards.length < 8;
+}
+function go(view, params = {}) {
+  explainCtl?.abort();
+  S.view = view; S.params = params;
+  render();
+  window.scrollTo({ top: 0 });
+}
+let toastTimer = null;
+function toast(msg) {
+  const el = byId('toast'); if (!el || !msg) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3400);
+}
+
+/* ---------- Lernen ---------- */
+/* Antwortauswahl zum Antippen: Prüfungsfragen haben eigene Optionen; Stapel mit überwiegend kurzen Antworten
+   (Drogen, Wirkstoffe, Abfüllen …) bekommen Ablenker aus demselben Stapel. Lange Erklärantworten bleiben Karteikarten. */
+function choiceOptions(d, c) {
+  if (c.opts) return c.opts;
+  if (c.b.length > 80 || !d.cards.length) return null;
+  const shorts = d.cards.filter((x) => x.b.length <= 80);
+  if (shorts.length / d.cards.length < 0.7) return null;
+  const pool = uniq(shuffle(shorts.map((x) => x.b))).filter((b) => norm(b) !== norm(c.b));
+  return pool.length ? [c.b, ...pool.slice(0, 3)] : null;
+}
+function mkItem(d, c) {
+  const rev = !c.img && !c.opts && (d.direction === 'reverse' || (d.direction === 'mixed' && Math.random() < 0.5));
+  const opts = rev ? null : choiceOptions(d, c);
+  return { d: d.id, c: c.id, box: c.box, rev, opts: opts ? shuffle([...opts]) : null };
+}
+function mcPick(i) {
+  const s = S.session; if (!s || S.view !== 'study' || s.mcPick != null) return;
+  const item = currentStudyItem(); if (!item || !item.opts || i < 0 || i >= item.opts.length) return;
+  const card = getCard(item.d, item.c); if (!card) return;
+  s.mcPick = i; s.revealed = true;
+  const acts = byId('study-actions'); if (acts) acts.innerHTML = studyActions();
+  if (item.opts[i] === card.b) { const pos = s.pos; setTimeout(() => { if (S.session === s && s.pos === pos && s.mcPick === i) answer(true); }, 900); }
+  else {
+    const nb = byId('mc-next');
+    if (nb) { nb.focus({ preventScroll: true }); nb.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+  }
+}
+function mcNext() {
+  const s = S.session; if (!s || s.mcPick == null) return;
+  const item = currentStudyItem(), card = item && getCard(item.d, item.c); if (!card || !item.opts) return;
+  answer(item.opts[s.mcPick] === card.b);
+}
+function beginSession(kind, deckIds, queue) {
+  S.session = { kind, deckIds, queue, pos: 0, flipped: false, revealed: false, mcPick: null, failed: {}, requeued: {}, log: [], res: { ok: 0, bad: 0, up: 0 }, explain: null };
+  go('study');
+}
+function startLearn(deckIds) {
+  const t = today(), items = [];
+  for (const d of S.decks) { if (deckIds && !deckIds.includes(d.id)) continue; for (const c of d.cards) if (c.due <= t) items.push(mkItem(d, c)); }
+  if (!items.length) { toast('Gerade ist hier nichts fällig. Du kannst trotzdem üben.'); go('home'); return; }
+  shuffle(items); items.sort((a, b) => a.box - b.box);
+  beginSession('learn', deckIds, items.slice(0, SESSION_SIZE));
+}
+function startPractice(deckIds, onlyKeys) {
+  const items = [];
+  for (const d of S.decks) { if (deckIds && !deckIds.includes(d.id)) continue; for (const c of d.cards) if (!onlyKeys || onlyKeys.includes(d.id + '/' + c.id)) items.push(mkItem(d, c)); }
+  if (!items.length) { toast('Hier sind noch keine Karten.'); return; }
+  beginSession('practice', deckIds, shuffle(items).slice(0, SESSION_SIZE));
+}
+function flip() {
+  const s = S.session; if (!s || S.view !== 'study' || currentStudyItem()?.opts) return;
+  s.flipped = !s.flipped; if (s.flipped) s.revealed = true;
+  const el = byId('icard');
+  if (el) { el.classList.toggle('flipped', s.flipped); $('.front', el).setAttribute('aria-hidden', String(s.flipped)); $('.back', el).setAttribute('aria-hidden', String(!s.flipped)); }
+  const acts = byId('study-actions'); if (acts) acts.innerHTML = studyActions();
+}
+function answer(right) {
+  const s = S.session; if (!s || !s.revealed) return;
+  const item = currentStudyItem(); if (!item) return;
+  const deck = getDeck(item.d), card = getCard(item.d, item.c), key = item.d + '/' + item.c;
+  const first = !s.failed[key];
+  if (card && s.kind === 'learn') {
+    if (!card.seen) { const t = today(); S.stats.newd[t] = (S.stats.newd[t] || 0) + 1; }
+    if (right) {
+      if (s.failed[key]) card.due = addDays(today(), 1);
+      else { const from = card.box; card.box = Math.min(5, card.box + 1); card.due = addDays(today(), INTERVALS[card.box]); if (card.box > from) s.res.up++; }
+      card.ok++;
+    } else { card.box = 1; card.due = today(); card.bad++; }
+    card.seen = today(); card.last = right ? 1 : 0;
+    persistDeck(deck.id);
+  }
+  if (first) { s.log.push(right); if (right) s.res.ok++; else s.res.bad++; }
+  if (!right) {
+    s.failed[key] = true;
+    const n = s.requeued[key] || 0;
+    if (n < 2) { s.requeued[key] = n + 1; s.queue.splice(Math.min(s.queue.length, s.pos + 4), 0, { ...item }); }
+  }
+  bump();
+  explainCtl?.abort();
+  s.pos++; s.flipped = false; s.revealed = false; s.mcPick = null; s.explain = null;
+  if (s.pos >= s.queue.length) finishSession(); else render();
+}
+function finishSession() { if (S.mode === 'cloud') Store.flushAll(); S.view = 'summary'; render(); window.scrollTo({ top: 0 }); }
+function quitSession() {
+  const s = S.session;
+  if (s && s.log && s.log.length) finishSession(); else go('home');
+}
+
+/* ---------- Test, Drogen-Probe und Generalprobe ---------- */
+const tagOf = (c) => (/Katalogfrage ([A-F]\d+)/.exec(c.n || '') || [])[1] || '';
+function mcItem(c, deckId) { return { d: deckId, c: c.id, q: c.f, img: null, a: c.b, options: shuffle(uniq([c.b, ...c.opts])), tag: tagOf(c) }; }
+function drugItems(pairs, n) {
+  const pool = pairs.map((x) => x.c);
+  const names = uniq(pool.map((c) => c.b)), ws = uniq(pool.map((c) => c.x.wirkstoff)), an = uniq(pool.map((c) => c.x.anwendung));
+  const others = (list, right) => shuffle(list.filter((x) => norm(x) !== norm(right))).slice(0, 3);
+  return shuffle([...pairs]).slice(0, n).map(({ d, c }) => ({
+    d: d.id, c: c.id, img: c.img, name: c.b, sel: {}, checked: false,
+    groups: [
+      { key: 'name', label: 'Droge', a: c.b, options: shuffle([c.b, ...others(names, c.b)]) },
+      { key: 'teil', label: 'Pflanzenteil', a: c.x.teil, options: TEILE.includes(c.x.teil) ? [...TEILE] : [c.x.teil, ...TEILE] },
+      { key: 'wirkstoff', label: 'Wirkstoff', a: c.x.wirkstoff, options: shuffle([c.x.wirkstoff, ...others(ws, c.x.wirkstoff)]) },
+      { key: 'anwendung', label: 'Anwendungsgebiet', a: c.x.anwendung, options: shuffle([c.x.anwendung, ...others(an, c.x.anwendung)]) },
+    ],
+  }));
+}
+const mcCards = () => S.decks.flatMap((d) => d.cards.filter((c) => c.opts).map((c) => ({ d, c })));
+const drugCards = () => S.decks.flatMap((d) => d.cards.filter((c) => c.x && c.img).map((c) => ({ d, c })));
+const hasExam = () => mcCards().length >= 10 && drugCards().length >= 4;
+const examExtra = (s) => (s.kind === 'exam' ? ` · noch ${Math.max(0, 75 - Math.floor((Date.now() - s.startedAt) / 60000))} Min.` : '');
+const isMcStep = (s) => !!s && (s.kind === 'test' || (s.kind === 'exam' && s.qs[s.pos]?.t === 'mc'));
+const isDrugStep = (s) => !!s && (s.kind === 'drug' || (s.kind === 'exam' && s.qs[s.pos]?.t === 'drug'));
+function startExam() {
+  if (!hasExam()) { toast('Für die Generalprobe fehlen Prüfungsfragen oder Drogenkarten.'); return; }
+  const mc = shuffle(mcCards()).slice(0, 50).map(({ d, c }) => ({ t: 'mc', ...mcItem(c, d.id) }));
+  const dr = drugItems(drugCards(), 15);
+  const qs = mc.concat(dr.map((q, i) => ({ t: 'drug', di: i + 1, dn: dr.length, ...q })));
+  S.session = { kind: 'exam', deckIds: [], qs, pos: 0, picked: null, log: [], res: { ok: 0, bad: 0 }, wrong: [], startedAt: Date.now() };
+  go('exam');
+}
+function startTest(deckId) {
+  const d = getDeck(deckId); if (!d) return;
+  if (d.cards.length < 4) { toast('Für einen Test braucht der Stapel mindestens 4 Karten.'); return; }
+  const qs = shuffle([...d.cards]).slice(0, 10).map((c) => {
+    if (c.opts) return mcItem(c, d.id);
+    const rev = !c.img && (d.direction === 'reverse' || (d.direction === 'mixed' && Math.random() < 0.5));
+    const a = rev ? c.f : c.b, opts = [a], seen = new Set([norm(a)]);
+    for (const o of shuffle(d.cards.map((x) => (rev ? x.f : x.b)))) { if (opts.length >= 4) break; const k = norm(o); if (k && !seen.has(k)) { seen.add(k); opts.push(o); } }
+    return { d: d.id, c: c.id, q: rev ? c.b : c.f, img: !rev && c.img ? c.img : null, a, options: shuffle(opts) };
+  });
+  S.session = { kind: 'test', deckIds: [deckId], qs, pos: 0, picked: null, log: [], res: { ok: 0, bad: 0 }, wrong: [] };
+  go('test');
+}
+function pick(i) {
+  const s = S.session; if (!isMcStep(s) || s.picked != null) return;
+  const q = s.qs[s.pos]; if (!q || i < 0 || i >= q.options.length) return;
+  s.picked = i; const ok = q.options[i] === q.a;
+  s.log.push(ok); if (ok) { s.res.ok++; markRight(q); } else { s.res.bad++; s.wrong.push(s.pos); markWeak(q); }
+  bump(); render();
+  /* Richtig: automatisch weiter. Falsch: stehen lassen, damit die Lösung gelesen werden kann. */
+  if (ok) { const pos = s.pos; setTimeout(() => { if (S.session === s && s.pos === pos && s.picked != null) nextQuestion(); }, 750); }
+}
+function nextQuestion() {
+  const s = S.session; if (!isMcStep(s) || s.picked == null) return;
+  s.pos++; s.picked = null;
+  if (s.pos >= s.qs.length) { S.view = 'summary'; recordExam(s); }
+  render(); window.scrollTo({ top: 0 });
+}
+function startDrugProbe(deckId) {
+  const d = getDeck(deckId) || S.decks.find(isDrugDeck); if (!d) return;
+  const pool = d.cards.filter((c) => c.x && c.img).map((c) => ({ d, c }));
+  if (pool.length < 4) { toast('Für die Drogen-Probe fehlen Karten mit Bild.'); return; }
+  S.session = { kind: 'drug', deckIds: [d.id], qs: drugItems(pool, 15), pos: 0, log: [], res: { ok: 0, bad: 0 }, wrong: [] };
+  go('drug');
+}
+function drugSelect(gi, oi) {
+  const s = S.session; if (!isDrugStep(s)) return;
+  const q = s.qs[s.pos], g = q && q.groups[gi]; if (!g || q.checked || oi < 0 || oi >= g.options.length) return;
+  q.sel[g.key] = oi; render();
+}
+function drugCheck() {
+  const s = S.session; if (!isDrugStep(s)) return;
+  const q = s.qs[s.pos]; if (!q || q.checked || !q.groups.every((g) => q.sel[g.key] != null)) return;
+  q.checked = true;
+  const ok = q.groups.every((g) => g.options[q.sel[g.key]] === g.a);
+  s.log.push(ok); if (ok) { s.res.ok++; markRight(q); } else { s.res.bad++; s.wrong.push(s.pos); markWeak(q); }
+  bump(); render();
+  if (ok) { const pos = s.pos; setTimeout(() => { if (S.session === s && s.pos === pos && q.checked) drugNext(); }, 900); }
+}
+function drugNext() {
+  const s = S.session; if (!isDrugStep(s) || !s.qs[s.pos]?.checked) return;
+  s.pos++;
+  if (s.pos >= s.qs.length) { S.view = 'summary'; recordExam(s); }
+  render(); window.scrollTo({ top: 0 });
+}
+
+/* ---------- Claude erklärt ---------- */
+function sampleErr(e) {
+  switch (e && e.code) {
+    case 'not_granted': case 'sampling_disabled': case 'not_declared': case 'capability_disabled': case 'capability_removed':
+      S.sample = null; return 'Claude ist für diese Seite nicht freigegeben.';
+    case 'rate_limited': return 'Gerade zu viele Anfragen. Versuch es in ein paar Minuten noch einmal.';
+    case 'session_expired': return 'Bitte melde dich bei Claude neu an.';
+    case 'refused': return 'Claude hat diese Anfrage abgelehnt.';
+    case 'cancelled': return '';
+    default: return 'Die Verbindung wurde unterbrochen. Versuch es noch einmal.';
+  }
+}
+async function explain() {
+  const s = S.session; if (!S.sample || !s || S.view !== 'study') return;
+  const item = currentStudyItem(); if (!item) return;
+  const deck = getDeck(item.d), card = getCard(item.d, item.c); if (!card) return;
+  const box = byId('explain'), txt = byId('explain-text'); if (!box || !txt) return;
+  box.hidden = false; txt.textContent = 'Claude denkt nach …';
+  const btn = $('[data-act="explain"]'); if (btn) btn.disabled = true;
+  explainCtl?.abort();
+  const ctl = new AbortController(); explainCtl = ctl;
+  const pos = s.pos, rev = !!item.rev && !card.img;
+  const q = card.img ? 'Foto einer Arzneidroge' : rev ? card.b : card.f, a = rev ? card.f : card.b;
+  const prompt = `Ich bereite mich auf die IHK-Sachkundeprüfung für freiverkäufliche Arzneimittel (Einzelhandel) vor und lerne mit Karteikarten. Erkläre mir kurz und verständlich (3 bis 5 Sätze, auf Deutsch, in der Du-Form), warum die Antwort auf diese Karte stimmt. Nenne eine Eselsbrücke, wenn es eine gute gibt. Schreib nur Fließtext ohne Überschriften oder Aufzählungen.\n\nStapel: ${deck.name}\nFrage: ${q}${card.opts ? '\nAntwortmöglichkeiten: ' + card.opts.join(' | ') : ''}\nAntwort: ${a}${card.n ? '\nZusatz: ' + card.n : ''}`;
+  const same = () => S.session === s && s.pos === pos && S.view === 'study';
+  try {
+    const { text } = await S.sample(prompt, { modelTier: 'quick', signal: ctl.signal, onText: ({ text }) => { if (same()) { const el = byId('explain-text'); if (el) el.textContent = text; } } });
+    if (same()) s.explain = text;
+  } catch (e) {
+    if (e && e.code === 'cancelled') return;
+    if (same()) { const el = byId('explain-text'); if (el) el.textContent = (e && e.text) || sampleErr(e); }
+  } finally {
+    if (explainCtl === ctl) explainCtl = null;
+    if (same()) { const b = $('[data-act="explain"]'); if (b) b.disabled = false; }
+  }
+}
+
+/* ---------- Stapel bearbeiten ---------- */
+function newDeck() {
+  const d = { id: uid(), name: 'Neuer Stapel', direction: 'normal', example: false, order: 999, createdAt: Date.now(), cards: [] };
+  S.decks.push(d); S.decks.sort(deckOrder); persistDeck(d.id);
+  go('deck', { id: d.id, fresh: true });
+}
+function addCard() {
+  const d = getDeck(S.params.id); if (!d) return;
+  const fEl = byId('new-front'), bEl = byId('new-back');
+  const f = fEl.value.trim(), b = bEl.value.trim();
+  if (!f || !b) { toast('Bitte Vorder- und Rückseite ausfüllen.'); (!f ? fEl : bEl).focus(); return; }
+  const c = newCard(f, b);
+  if (!fits(d, [c])) { toast('Dieser Stapel ist voll. Lege für weitere Karten einen neuen Stapel an.'); return; }
+  d.cards.push(c); persistDeck(d.id);
+  fEl.value = ''; bEl.value = ''; fEl.focus();
+  renderCardList(); toast('Karte hinzugefügt.');
+}
+function parseBulk(text) {
+  const out = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim(); if (!line) continue;
+    for (const sep of ['\t', ';', ' = ', ' – ', ' - ']) {
+      const i = line.indexOf(sep);
+      if (i > 0) { const f = line.slice(0, i).trim(), b = line.slice(i + sep.length).trim(); if (f && b) out.push({ f, b }); break; }
+    }
+  }
+  return out;
+}
+function bulkAdd() {
+  const d = getDeck(S.params.id), ta = byId('bulk-text'); if (!d || !ta) return;
+  const items = parseBulk(ta.value), lines = ta.value.split(/\r?\n/).filter((l) => l.trim()).length;
+  if (!items.length) { toast('Keine Karte erkannt. Trenne Vorder- und Rückseite mit ; oder einem Tabulator.'); return; }
+  const cards = items.map((x) => newCard(x.f, x.b));
+  if (!fits(d, cards)) { toast('So viele Karten passen nicht mehr in diesen Stapel. Teile sie auf zwei Stapel auf.'); return; }
+  d.cards.push(...cards); persistDeck(d.id); ta.value = '';
+  renderCardList();
+  toast(`${pl(cards.length, 'Karte', 'Karten')} eingefügt${lines > cards.length ? `, ${lines - cards.length} Zeilen übersprungen` : ''}.`);
+}
+
+/* ---------- Ereignisse ---------- */
+const ACTIONS = {
+  home: () => go('home'),
+  'learn-all': () => startLearn(null),
+  auto: startAuto,
+  'practice-all': () => startPractice(null),
+  'deck-learn': (el) => startLearn([el.dataset.id]),
+  'deck-practice': (el) => startPractice([el.dataset.id]),
+  'deck-test': (el) => startTest(el.dataset.id),
+  'drug-probe': (el) => startDrugProbe(el.dataset.id),
+  'exam-start': startExam,
+  'deck-edit': (el) => go('deck', { id: el.dataset.id }),
+  'new-deck': newDeck,
+  flip, right: () => answer(true), wrong: () => answer(false), quit: quitSession, explain,
+  continue: () => (S.session?.auto ? startAuto() : startLearn(S.session?.deckIds || null)),
+  'again-failed': () => { const s = S.session; startPractice(s.deckIds, Object.keys(s.failed)); },
+  pick: (el) => pick(+el.dataset.i), next: nextQuestion,
+  'drug-sel': (el) => drugSelect(+el.dataset.g, +el.dataset.o), 'drug-check': drugCheck, 'drug-next': drugNext,
+  'bulk-add': bulkAdd,
+  'mc-pick': (el) => mcPick(+el.dataset.i), 'mc-next': mcNext,
+  'moodle-copy': () => { moodleCopy(); },
+  'moodle-share': () => { const ta = byId('moodle-code'); if (ta && navigator.share) navigator.share({ text: ta.value }).catch(() => {}); },
+  'card-edit': (el) => { S.params.editing = el.dataset.cid; S.params.confirmDel = null; renderCardList(); byId('ef-' + el.dataset.cid)?.focus(); },
+  'card-cancel': () => { S.params.editing = null; renderCardList(); },
+  'card-save': (el) => {
+    const d = getDeck(S.params.id), c = d && d.cards.find((x) => x.id === el.dataset.cid); if (!c) return;
+    const f = byId('ef-' + c.id).value.trim(), b = byId('eb-' + c.id).value.trim();
+    if (!f || !b) { toast('Bitte Vorder- und Rückseite ausfüllen.'); return; }
+    c.f = f; c.b = b; S.params.editing = null; persistDeck(d.id); renderCardList(); toast('Gespeichert.');
+  },
+  'card-del': (el) => { S.params.confirmDel = el.dataset.cid; renderCardList(); },
+  'card-del-no': () => { S.params.confirmDel = null; renderCardList(); },
+  'card-del-yes': (el) => {
+    const d = getDeck(S.params.id); if (!d) return;
+    d.cards = d.cards.filter((x) => x.id !== el.dataset.cid); S.params.confirmDel = null;
+    persistDeck(d.id); renderCardList(); toast('Karte gelöscht.');
+  },
+  danger: (el) => { S.params.confirm = el.dataset.kind; byId('danger-row').innerHTML = dangerHTML(); },
+  'danger-no': () => { S.params.confirm = null; byId('danger-row').innerHTML = dangerHTML(); },
+  'reset-yes': () => {
+    const d = getDeck(S.params.id); if (!d) return;
+    const t = today(); d.cards.forEach((c) => { c.box = 1; c.due = t; c.ok = 0; c.bad = 0; c.seen = null; });
+    S.params.confirm = null; persistDeck(d.id); byId('danger-row').innerHTML = dangerHTML(); renderCardList(); toast('Alle Karten liegen wieder in Fach 1.');
+  },
+  'delete-yes': () => { const d = getDeck(S.params.id); if (!d) return; dropDeck(d.id); go('home'); toast(`„${d.name}“ gelöscht.`); },
+};
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-act]');
+  if (!el || el.disabled) return;
+  const fn = ACTIONS[el.dataset.act];
+  if (fn) fn(el, e);
+});
+document.addEventListener('keydown', (e) => {
+  const t = e.target;
+  if (t.closest && t.closest('input, textarea, select')) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && t.closest('#add-form')) { e.preventDefault(); addCard(); }
+    return;
+  }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const onButton = !!(t.closest && t.closest('button'));
+  const s = S.session;
+  if (S.view === 'study' && s && currentStudyItem()?.opts) {
+    if (s.mcPick == null && /^[1-8]$/.test(e.key)) { e.preventDefault(); mcPick(+e.key - 1); }
+    else if (s.mcPick != null && (e.key === 'Enter' || e.key === ' ') && !onButton) { e.preventDefault(); mcNext(); }
+  } else if (S.view === 'study' && s) {
+    if ((e.key === ' ' || e.key === 'Enter') && !onButton) { e.preventDefault(); if (!s.revealed || t.id === 'icard') flip(); }
+    else if (s.revealed && (e.key === '1' || e.key === 'ArrowLeft')) { e.preventDefault(); answer(false); }
+    else if (s.revealed && (e.key === '2' || e.key === 'ArrowRight')) { e.preventDefault(); answer(true); }
+  } else if ((S.view === 'test' || S.view === 'exam') && isMcStep(s)) {
+    if (/^[1-8]$/.test(e.key) && s.picked == null) { e.preventDefault(); pick(+e.key - 1); }
+    else if ((e.key === 'Enter' || e.key === ' ') && s.picked != null && !onButton) { e.preventDefault(); nextQuestion(); }
+  }
+});
+document.addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.id === 'goal-select') { S.stats.goal = +t.value; persistStats(); render(); }
+  else if (t.id === 'exam-date') { S.stats.examDate = validDay(t.value) ? t.value : null; persistStats(); render(); toast(S.stats.examDate ? `Prüfungstermin gespeichert: ${fmtDay(S.stats.examDate)}.` : 'Prüfungstermin entfernt.'); }
+  else if (t.id === 'deck-name') { const d = getDeck(S.params.id); if (d) { d.name = t.value.trim().slice(0, 80) || 'Ohne Namen'; t.value = d.name; persistDeck(d.id); } }
+  else if (t.id === 'deck-dir') { const d = getDeck(S.params.id); if (d && DIRS[t.value]) { d.direction = t.value; persistDeck(d.id); } }
+});
+document.addEventListener('input', (e) => { if (e.target.id === 'card-filter') { S.params.filter = e.target.value; renderCardList(); } });
+document.addEventListener('submit', (e) => { if (e.target.id === 'add-form') { e.preventDefault(); addCard(); } });
+const flushNow = () => { if (S.mode === 'cloud') Store.flushAll(); else if (localTimer) saveLocal(); };
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushNow(); });
+window.addEventListener('pagehide', flushNow);
+
+/* ---------- Start ---------- */
+function restoreHot() {
+  const h = hotData; hotData = null;
+  if (!h || typeof h !== 'object' || !h.view) return;
+  try {
+    if (h.view === 'deck' && h.params && getDeck(h.params.id)) { S.view = 'deck'; S.params = { id: h.params.id }; }
+    else if (['study', 'test', 'drug', 'exam', 'summary'].includes(h.view) && h.session && typeof h.session === 'object' && Array.isArray(h.session.log)) { S.session = h.session; S.view = h.view; S.params = {}; }
+  } catch { S.view = 'home'; S.session = null; }
+}
+async function init() {
+  render();
+  const c = window.claude;
+  if (window.OTC_DATA) { startLocal('Dein Lernstand wird auf diesem Gerät gespeichert.'); return; }
+  if (!c || typeof c.use !== 'function') { startLocal('Du hast die App außerhalb von Claude geöffnet. Öffne den Link in der Claude-App oder auf claude.ai, dann ist dein Lernstand auf allen Geräten gleich.'); return; }
+  c.use('sample').then((fn) => {
+    S.sample = fn || null;
+    if (S.ready && S.view === 'study') { const acts = byId('study-actions'); if (acts) acts.innerHTML = studyActions(); }
+  }).catch(() => {});
+  let db = null, user = null;
+  try { [db, user] = await Promise.all([c.use('db'), c.use('user')]); } catch { /* ohne Konto-Speicher */ }
+  let owner = false;
+  try { owner = user ? await user.isOwner() : false; } catch { owner = false; }
+  if (db && owner) startCloud(db);
+  else startLocal(db ? 'Diese App gehört einem anderen Claude-Konto. Dein Fortschritt bleibt in diesem Browser.' : 'Melde dich bei Claude mit deinem Konto an und öffne den Link erneut, dann ist dein Lernstand auf allen Geräten gleich.');
+}
+window.claude?.hot?.snapshot?.(() => ({ view: S.view, params: S.params, session: S.session }));
+const start = (data) => { hotData = data && typeof data === 'object' ? data : null; init(); };
+const boot = () => { if (window.claude?.hot?.ready) window.claude.hot.ready(start); else start(window.claude?.hot?.data ?? {}); };
+/* Eigene Web-App: erst nach Passwort-Entsperrung starten */
+if (window.OTC_GATE) window.OTC_GATE.then(boot); else boot();
+})();
+</script>
