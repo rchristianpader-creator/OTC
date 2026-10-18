@@ -82,18 +82,29 @@ img { max-width: 100%; }
 #lock-btn:disabled { opacity: .6; }
 #lock-msg { min-height: 1.4em; margin: 0; color: #A50E16; font-weight: 700; }
 .lock-hint { margin: 0; color: #5A5A56; font-size: .9rem; }
+.lock-user { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; border: 0; padding: 0; }
+.lock-pwrow { display: flex; gap: 8px; }
+.lock-pwrow #lock-pw { flex: 1; min-width: 0; }
+#lock-show { flex: none; min-height: 48px; padding: 0 14px; border: 1.5px solid #DCDCD6; border-radius: 10px; background: #FFFFFF; color: #1A1A1A; font: 700 .9rem/1 inherit; font-family: inherit; cursor: pointer; }
+.lock-check { display: flex; align-items: center; gap: 10px; font-weight: 400 !important; font-size: .95rem; min-height: 44px; }
+.lock-check input { width: 22px; height: 22px; accent-color: #DC0D15; }
 </style>
 ${fragHead}</head>
 <body>
 <div id="lock" hidden>
   <div class="lock-card">
     <div class="lock-head">OTC Sachkunde</div>
-    <form id="lock-form">
+    <form id="lock-form" method="post" action="#">
+      <input class="lock-user" type="text" name="username" autocomplete="username" value="OTC Sachkunde" readonly tabindex="-1" aria-hidden="true">
       <label for="lock-pw">Passwort</label>
-      <input id="lock-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      <div class="lock-pwrow">
+        <input id="lock-pw" name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        <button id="lock-show" type="button" aria-pressed="false">Anzeigen</button>
+      </div>
+      <label class="lock-check"><input type="checkbox" id="lock-remember" checked> Passwort auf diesem Gerät speichern</label>
       <button id="lock-btn" type="submit">Öffnen</button>
       <p id="lock-msg" role="alert"></p>
-      <p class="lock-hint">Du gibst das Passwort auf jedem Gerät nur einmal ein.</p>
+      <p class="lock-hint">Mit Häkchen fragt die App auf diesem Gerät nicht wieder. Dein Passwort-Manager kann es zusätzlich sichern.</p>
     </form>
   </div>
 </div>
@@ -108,6 +119,11 @@ ${fragHead}</head>
   window.OTC_GATE = new Promise((r) => { resolveGate = r; });
   const lock = document.getElementById('lock'), form = document.getElementById('lock-form');
   const pw = document.getElementById('lock-pw'), btn = document.getElementById('lock-btn'), msg = document.getElementById('lock-msg');
+  const show = document.getElementById('lock-show'), remember = document.getElementById('lock-remember');
+  show.addEventListener('click', () => {
+    const visible = pw.type === 'password';
+    pw.type = visible ? 'text' : 'password'; show.textContent = visible ? 'Verbergen' : 'Anzeigen'; show.setAttribute('aria-pressed', String(visible)); pw.focus();
+  });
   async function decrypt(key) {
     const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(PACK.iv) }, key, b64(PACK.ct));
     return JSON.parse(new TextDecoder().decode(plain));
@@ -115,7 +131,9 @@ ${fragHead}</head>
   function unlock(data) { window.OTC_DATA = data; lock.remove(); resolveGate(); }
   async function tryStoredKey() {
     try {
-      const raw = localStorage.getItem(KEY_STORE); if (!raw) return false;
+      let raw = null;
+      try { raw = localStorage.getItem(KEY_STORE) || sessionStorage.getItem(KEY_STORE); } catch { /* kein Speicher */ }
+      if (!raw) return false;
       const key = await crypto.subtle.importKey('raw', b64(raw), 'AES-GCM', false, ['decrypt']);
       unlock(await decrypt(key)); return true;
     } catch { return false; }
@@ -127,7 +145,12 @@ ${fragHead}</head>
       const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw.value.trim()), 'PBKDF2', false, ['deriveKey']);
       const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(PACK.salt), iterations: PACK.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, true, ['decrypt']);
       const data = await decrypt(key);
-      try { localStorage.setItem(KEY_STORE, toB64(await crypto.subtle.exportKey('raw', key))); } catch { /* ohne Merken weiter */ }
+      const raw = toB64(await crypto.subtle.exportKey('raw', key));
+      try { (remember.checked ? localStorage : sessionStorage).setItem(KEY_STORE, raw); } catch { /* ohne Merken weiter */ }
+      if (remember.checked && window.PasswordCredential && navigator.credentials) {
+        try { navigator.credentials.store(new PasswordCredential({ id: 'OTC Sachkunde', name: 'OTC Sachkunde', password: pw.value })).catch(() => {}); } catch { /* nicht unterstützt */ }
+      }
+      pw.type = 'password';
       unlock(data);
     } catch {
       msg.textContent = 'Das Passwort stimmt nicht. Achte auf Bindestriche und Großbuchstaben.';
